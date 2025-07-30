@@ -80,6 +80,7 @@ export function shift_lst<T>(lst : T[], n : number, way : boolean){ // true : fo
 			lst[n] = tmp2;
 		}
 	}
+	return lst;
 }
 
 // mutates
@@ -87,6 +88,7 @@ export function combine_obj(obj : Record<string,any>,obj2 : Record<string,any>){
 	for(let item of Object.keys(obj2)){
 		obj[item] = obj2[item];
 	}
+	return obj
 }
 
 // these two are used when the values in the hash table are lists
@@ -95,6 +97,7 @@ export function add_obj<K extends string | number | symbol, V>(obj : Record<K,V[
 		obj[k] = [];
 	}
 	obj[k].push(v); 
+	return obj;
 }
 
 export function concat_obj<K extends string | number | symbol, V>(obj : Record<K,V[]>, k : K, v : V[]){
@@ -102,6 +105,7 @@ export function concat_obj<K extends string | number | symbol, V>(obj : Record<K
 		obj[k] = [];
 	}
 	obj[k] = obj[k].concat(v); 
+	return obj;
 }
 
 export function noNaN(lst : any[]) {
