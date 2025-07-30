@@ -1,4 +1,14 @@
-App is the first thing that gets rendered, and it should do the following in order : 
+how to use :
+
+git clone https://github.com/david-guy-1/game_engine.git
+cd game_engine
+npm i (takes a while)
+npm run dev
+
+----
+
+
+gamedata/App is the first thing that gets rendered, and it should do the following in order : 
     set the "events" object from eventManager - see the EventManager section for how to do this.
     create a gamedata object with a game (add in its own prop-fns if necessary) and globalStore (key-value pairs that will be passed into all functions)
     render ../GameDisplay.tsx 
