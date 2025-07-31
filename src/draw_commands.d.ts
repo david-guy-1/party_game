@@ -32,6 +32,8 @@ type fillstyle = string | fill_linear | fill_radial | fill_conic
 type bezier = [number, number, number, number, number, number];
 
 // start replacing HERE
+
+// x, y are top left
 type drawImage_command = {
    "type" : "drawImage",
    "img" : string,
