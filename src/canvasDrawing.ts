@@ -275,6 +275,14 @@ export function d_line(...args : (number | number[])[] ) : drawLine_command{
 	return {"type":"drawLine", "x0" : x[0], "y0" : x[1], "x1" : x[2], "y1" : x[3]}
 } 
 
+export function d_line2(...args : (number | number[])[] ) : drawLine_command{
+	let x = flatten_all(args) as number[] ;
+	if(x.length != 4){
+		throw "draw line without enough arguments"
+	}
+	return {"type":"drawLine", "x0" : x[0], "y0" : x[1], "x1" : x[0]+x[2], "y1" : x[1]+x[3]}
+} 
+
 
 export function d_circle(...args : (number | number[])[] ) : drawCircle_command{
 	let x = flatten_all(args) as number[] ;

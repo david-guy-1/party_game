@@ -684,6 +684,9 @@ export function move_wall(point : point ,walls :[number,number,number,number][],
             target = moveTo(point,target,amt) as point;
         }
         for(let w of walls){
+			if(dist(point, target) < epsilon){
+				break;
+			}	
             if(doLinesIntersect(point, target, w)){
                 let intersection = getIntersection(pointToCoefficients(point, target), pointToCoefficients(w));
                 // target = intersection + (start - intersection) normalized to 0.01
@@ -693,6 +696,24 @@ export function move_wall(point : point ,walls :[number,number,number,number][],
         return target
 }
 	
+export function move_wallWH(point : point ,walls :[number,number,number,number][], target : point, amt? : number, epsilon : number = 0.001) : point{
+	if(amt != undefined){
+		target = moveTo(point,target,amt) as point;
+	}
+	
+	for(let w of walls){
+		if(dist(point, target) < epsilon){
+			break;
+		}
+		if(doLinesIntersect(point, target, [w[0], w[1], w[0]+w[2], w[1]+w[3]])){
+			let intersection = getIntersection(pointToCoefficients(point, target), pointToCoefficients(w));
+			// target = intersection + (start - intersection) normalized to 0.01
+			target = lincomb(1, intersection, 1, normalize(lincomb(1, point, -1, intersection), epsilon)) as point; 
+		}
+	}
+	return target
+}
+
 	
 	
 // doLinesIntersect(412, 666, 620 , 434, 689, 675, 421, 514) = true

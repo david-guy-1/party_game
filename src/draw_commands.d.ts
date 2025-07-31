@@ -1,3 +1,5 @@
+// for transparency, 1 is opaque and 0 is transparent
+
 type fill_linear  = {
    "type":"fill_linear",
    "x0" : number, 
