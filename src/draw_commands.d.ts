@@ -118,6 +118,8 @@ type drawEllipse_command = {
    "rotate" ?: number,
    "start" ?: number,
    "end" ?: number,
+   "fill"?:boolean,
+   "stroke_width"?:number
 }
 
 type drawEllipseCR_command = {
@@ -131,20 +133,10 @@ type drawEllipseCR_command = {
    "rotate" ?: number,
    "start" ?: number,
    "end" ?: number,
+   "fill"?:boolean,
+   "stroke_width"?:number
 }
 
-type drawEllipse2_command = {
-   "type" : "drawEllipse2",
-   "posx" : number,
-   "posy" : number,
-   "width" : number,
-   "height" : number,
-   "color" ?: fillstyle,
-   "transparency" ?: number,
-   "rotate" ?: number,
-   "start" ?: number,
-   "end" ?: number,
-}
 
 type drawBezierCurve_command = {
    "type" : "drawBezierCurve",
@@ -182,4 +174,4 @@ type drawRoundedRectangle_command = {
    "fill" ?: boolean,
 }
 
-type draw_command = drawImage_command|drawLine_command|drawCircle_command|drawPolygon_command|drawRectangle_command|drawRectangle2_command|drawText_command|drawEllipse_command|drawEllipseCR_command|drawEllipse2_command|drawBezierCurve_command|drawBezierShape_command|drawRoundedRectangle_command
+type draw_command = drawImage_command|drawLine_command|drawCircle_command|drawPolygon_command|drawRectangle_command|drawRectangle2_command|drawText_command|drawEllipse_command|drawEllipseCR_command|drawBezierCurve_command|drawBezierShape_command|drawRoundedRectangle_command

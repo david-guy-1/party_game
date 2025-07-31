@@ -153,23 +153,34 @@ export function drawPolygon(context :CanvasRenderingContext2D, points_x : number
 }
 
 // see drawRectangle
- export function drawEllipse(context :CanvasRenderingContext2D, posx : number, posy : number, brx : number, bry : number ,color : fillstyle="black", transparency : number =1, rotate : number = 0, start :number= 0 , end :number= 2*Math.PI){
+ export function drawEllipse(context :CanvasRenderingContext2D, posx : number, posy : number, brx : number, bry : number ,color : fillstyle="black", transparency : number =1, rotate : number = 0, start :number= 0 , end :number= 2*Math.PI, fill=false,stroke_width=1){
 	noNaN(arguments as any as any[][]);
-	drawEllipse2( context, posx, posy, brx-posx, bry-posy ,color, transparency, rotate, start, end)
+	drawEllipse2( context, posx, posy, brx-posx, bry-posy ,color, transparency, rotate, start, end,fill, stroke_width)
 }
 //draw ellipse with center and radii
- export function drawEllipseCR(context :CanvasRenderingContext2D, cx : number, cy : number, rx : number, ry  : number,color : fillstyle="black", transparency : number =1, rotate : number = 0, start :number= 0 , end :number= 2*Math.PI){
+ export function drawEllipseCR(context :CanvasRenderingContext2D, cx : number, cy : number, rx : number, ry  : number,color : fillstyle="black", transparency : number =1, rotate : number = 0, start :number= 0 , end :number= 2*Math.PI, fill=false,stroke_width=1){
 	noNaN(arguments as any as any[][]);
-	drawEllipse2(context, cx-rx, cy-ry, 2*rx, 2*ry ,color, transparency, rotate, start, end)
+	drawEllipse2(context, cx-rx, cy-ry, 2*rx, 2*ry ,color, transparency, rotate, start, end, fill, stroke_width)
 }
 
- export function drawEllipse2(context :CanvasRenderingContext2D, posx : number, posy : number, width : number, height : number ,color : fillstyle="black", transparency : number =1,rotate : number = 0, start :number= 0 , end :number= 2*Math.PI){
+// base class, others call this class
+ export function drawEllipse2(context :CanvasRenderingContext2D, posx : number, posy : number, width : number, height : number ,color : fillstyle="black", transparency : number =1,rotate : number = 0, start :number= 0 , end :number= 2*Math.PI, fill=false,stroke_width=1){
 	noNaN(arguments as any as any[][]);
 	context.beginPath();
 	context.fillStyle=make_style(context, color)
     context.globalAlpha = transparency;
 	context.ellipse(posx+width/2, posy+height/2, width/2, height/2,rotate, start, end);
-	context.fill();
+
+	if(fill){
+		context.globalAlpha = transparency;	
+		context.fillStyle = make_style(context, color);
+		context.fill();
+		context.globalAlpha = 1;
+	} else {
+		context.lineWidth = stroke_width;
+		context.strokeStyle = make_style(context, color);
+		context.stroke();
+	}
     context.globalAlpha = 1;
 }
 

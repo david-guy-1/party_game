@@ -130,3 +130,4 @@ corners(tlx : number, tly : number, width : number, height : number, angle : num
 
 utilities contains a points drawing app, pojo typescript (automatically makes class with ctor), and image processing (opencv, applyMatrix applies a 3x3 or 4x4 matrix to every pixel of the image, note that it's in BGR and not RGB)
 
+note : for drawing stuff, transparency is 1 for opaque and 0 for transparent,
