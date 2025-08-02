@@ -1,5 +1,6 @@
 // put this into get_type.py, enter "DONE" (no quotes).
 
+import { point } from "./interfaces";
 import { add_obj, combine_obj, flatten, flatten_all, lincomb, noNaN, normalize } from "./lines";
 
 

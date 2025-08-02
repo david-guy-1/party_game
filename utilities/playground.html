@@ -1,0 +1,75 @@
+<html>
+<head>
+<script type="text/javascript">
+
+function main(){
+
+	
+}
+
+function set(s){
+	document.getElementById("text").value = s;
+}
+
+function set_json(s){
+	document.getElementById("text").value = JSON.stringify(s);
+}
+function get(){
+	return document.getElementById("text").value;
+}
+function get_json(){
+	return JSON.stringify(get);
+}
+</script>
+
+</head>
+<body onload = "main()">
+<canvas width=1000 height=700 id="canvas_obj"></canvas>
+<textarea id="text"></textarea>
+<script type="text/javascript" src="a.js"></script>
+<script type="text/javascript" src="lodash.js"></script>
+</body>
+<script type="text/javascript">
+c = document.getElementById("canvas_obj").getContext("2d");
+
+// put your code here to play around with!
+
+let clone = {"points":[["0",354.4,256.8],["1",354.4,202.8],["2",766.9679999999996,251.54240000000004],["3",-26.519999999999953,264.55999999999995],["4",-74.03999999999996,669.1999999999999],["5",801.5375999999998,693.2191999999999],["6",73.92,172.07999999999998],["7",79.92,193.68],["8",93.92,209.47999999999996],["9",117.92,218.47999999999996],["10",146.92000000000002,219.47999999999996],["11",176.92000000000002,219.47999999999996],["12",219.92000000000002,214.47999999999996],["13",242.92000000000002,205.47999999999996],["14",259.92,187.47999999999996],["15",272.92,169.47999999999996],["16",73.92,172.07999999999998],["17",79.92,193.68],["18",79.92,393.68],["19",73.92,372.08],["20",79.92,193.68],["21",93.92,209.47999999999996],["22",93.92,409.47999999999996],["23",79.92,393.68],["24",93.92,209.47999999999996],["25",117.92,218.47999999999996],["26",117.92,418.47999999999996],["27",93.92,409.47999999999996],["28",117.92,218.47999999999996],["29",146.92000000000002,219.47999999999996],["30",146.92000000000002,419.47999999999996],["31",117.92,418.47999999999996],["32",146.92000000000002,219.47999999999996],["33",176.92000000000002,219.47999999999996],["34",176.92000000000002,419.47999999999996],["35",146.92000000000002,419.47999999999996],["36",176.92000000000002,219.47999999999996],["37",219.92000000000002,214.47999999999996],["38",219.92000000000002,414.47999999999996],["39",176.92000000000002,419.47999999999996],["40",219.92000000000002,214.47999999999996],["41",242.92000000000002,205.47999999999996],["42",242.92000000000002,405.47999999999996],["43",219.92000000000002,414.47999999999996],["44",242.92000000000002,205.47999999999996],["45",259.92,187.47999999999996],["46",259.92,387.47999999999996],["47",242.92000000000002,405.47999999999996],["48",259.92,187.47999999999996],["49",272.92,169.47999999999996],["50",272.92,369.47999999999996],["51",259.92,387.47999999999996],["52",92.26879402469172,144.8898464691364],["53",110.60212735802503,131.55651313580302],["54",133.10212735802503,117.38984646913639],["55",156.4354606913584,109.88984646913639],["56",178.9354606913584,108.2231798024697],["57",202.26879402469172,108.2231798024697],["58",223.9354606913584,113.2231798024697],["59",245.60212735802503,123.2231798024697],["60",261.4354606913584,137.3898464691364],["61",271.4354606913584,149.8898464691364],["62",174.83546069135843,167.6631798024698]],"layers":[{"name":"background","shapes":[{"parent_layer":"background","type":"ellipse","points":[["0",0,0],["1",0,0],["2",0,0]],"name":"shape 0","outline_visible":true,"visible":true,"tag":[],"fill":"#338833"},{"parent_layer":"background","type":"polygon","points":[["2",0,0],["3",0,0],["4",0,0],["5",0,0]],"name":"shape 1","outline_visible":true,"visible":true,"tag":[],"fill":"#338833"}]},{"name":"hut","shapes":[{"parent_layer":"hut","type":"polygon","points":[["16",0,0],["17",0,0],["18",0,0],["19",0,0]],"name":"shape 3","outline_visible":true,"visible":true,"tag":["hut"],"fill":"#f7d77e","outline":{"thickness":3,"color":"#fae098"}},{"parent_layer":"hut","type":"polygon","points":[["20",0,0],["21",0,0],["22",0,0],["23",0,0]],"name":"shape 4","outline_visible":true,"visible":true,"tag":["hut"],"fill":"#f7d77e","outline":{"thickness":3,"color":"#fae098"}},{"parent_layer":"hut","type":"polygon","points":[["24",0,0],["25",0,0],["26",0,0],["27",0,0]],"name":"shape 5","outline_visible":true,"visible":true,"tag":["hut"],"fill":"#f7d77e","outline":{"thickness":3,"color":"#fae098"}},{"parent_layer":"hut","type":"polygon","points":[["28",0,0],["29",0,0],["30",0,0],["31",0,0]],"name":"shape 6","outline_visible":true,"visible":true,"tag":["hut"],"fill":"#f7d77e","outline":{"thickness":3,"color":"#fae098"}},{"parent_layer":"hut","type":"polygon","points":[["32",0,0],["33",0,0],["34",0,0],["35",0,0]],"name":"shape 7","outline_visible":true,"visible":true,"tag":["hut"],"fill":"#f7d77e","outline":{"thickness":3,"color":"#fae098"}},{"parent_layer":"hut","type":"polygon","points":[["36",0,0],["37",0,0],["38",0,0],["39",0,0]],"name":"shape 8","outline_visible":true,"visible":true,"tag":["hut"],"fill":"#f7d77e","outline":{"thickness":3,"color":"#fae098"}},{"parent_layer":"hut","type":"polygon","points":[["40",0,0],["41",0,0],["42",0,0],["43",0,0]],"name":"shape 9","outline_visible":true,"visible":true,"tag":["hut"],"fill":"#f7d77e","outline":{"thickness":3,"color":"#fae098"}},{"parent_layer":"hut","type":"polygon","points":[["44",0,0],["45",0,0],["46",0,0],["47",0,0]],"name":"shape 10","outline_visible":true,"visible":true,"tag":["hut"],"fill":"#f7d77e","outline":{"thickness":3,"color":"#fae098"}},{"parent_layer":"hut","type":"polygon","points":[["48",0,0],["49",0,0],["50",0,0],["51",0,0]],"name":"shape 11","outline_visible":true,"visible":true,"tag":["hut"],"fill":"#f7d77e","outline":{"thickness":3,"color":"#fae098"}},{"parent_layer":"hut","type":"polygon","points":[["16",0,0],["52",0,0],["53",0,0],["54",0,0],["55",0,0],["56",0,0],["57",0,0],["58",0,0],["59",0,0],["60",0,0],["61",0,0],["49",0,0],["45",0,0],["41",0,0],["37",0,0],["33",0,0],["29",0,0],["25",0,0],["21",0,0],["21",0,0],["17",0,0],["16",0,0]],"name":"shape 12","outline_visible":true,"visible":true,"tag":[],"fill":{"type":"fill_radial","p0":"62","p1":"62","r0":0,"r1":100,"colorstops":[[0,"#262214"],[1,"#635834"]]}}]},{"name":"fireplace","shapes":[]}],"zoom":[0,0,1],"layer_visibility":{"background":true,"hut":true,"fireplace":true},"show_points":"layer","show_labels":false,"selected_layer":"fireplace","total_points":63,"total_shapes":13,"message":"","true_points":true,"selected_shape":"shape 12"}
+
+function jiggle(pt, amt){
+	let new_ = lincomb(1, pt, amt*2, [Math.random()-0.5,Math.random()-0.5])
+	return new_
+}	
+
+let pieces = 20
+for(let i=0; i < pieces; i++){
+	let angle = 2*Math.PI/pieces * i + Math.random()*0.05; 
+	let next_angle = 2*Math.PI/pieces * (i+1) + Math.random()*0.05; 
+    let pts = [[80*Math.cos(angle), 80*Math.sin(angle)],[80*Math.cos(next_angle), 80*Math.sin(next_angle)], [110*Math.cos(next_angle), 110*Math.sin(next_angle)],[110*Math.cos(angle), 110*Math.sin(angle)]]
+	let center = [95*Math.cos((angle+next_angle)/2), 95*Math.sin((angle+next_angle)/2)]
+
+	pts = pts.map(function(pt){
+		let disp = lincomb(1, pt, -1, center);
+		let new_pt = lincomb(1, center, Math.random()*0.1+0.78, disp);
+		
+		return jiggle(new_pt, 5);
+	});
+	
+	clone.selected_point = undefined; 
+	add_new_shape(clone, clone.selected_layer,"polygon", pts[0]); 
+	let added_shape = list_shapes(clone)[clone.selected_shape][0]
+	for(let j=1 ; j < 4; j++){
+		add_point(clone, pts[j]);
+	}
+	let color = `hsl(${Math.random()*360}, ${Math.random()*10}%, ${Math.random()*30+20}%)`; 
+	added_shape.outline = {"thickness":3, "color":color};
+	added_shape.fill = color;
+	added_shape.tag.push("fireplace rock");
+}
+
+
+set_json(clone);
+draw_wrap(output(clone),c);
+
+</script>
+</html>

@@ -30,7 +30,11 @@ z(window,window,window,window,window,window,window,window,window,window,window,w
         <button onClick="apply_m3('layer')">Apply layer</button><button onClick="apply_m3('shape')">Apply shape</button><button onClick="apply_m3('all')">Apply all</button><button onClick="apply_m3([document.getElementById('layer_names').value.split('|'),'layer']);">Apply layers</button><button onClick="apply_m3([document.getElementById('layer_names').value.split('|'),'point']);">Apply points</button><button onClick="apply_m3([document.getElementById('layer_names').value.split('|'),'tag']);">Apply tags</button><br/>
         <input type="text" id="joiner" /> <button onClick="document.getElementById(`joiner`).value = JSON.parse(document.getElementById(`joiner`).value).map(x => x[0]).join(`|`)">points list to "|"</button>
         </div>
-      <div style="position: absolute; top:610px;left:800px;border:1px solid black; height:100px; width:600px" ><div id="point_loc"></div><div id="buttons"><button onClick="undo();draw_all();">Undo</button><button onClick="redo();draw_all();">Redo</button></div><div id="message" > </div></div>
+      <div style="position: absolute; top:610px;left:800px;border:1px solid black; height:120px; width:300px" ><div id="point_loc"></div><div id="buttons"><button onClick="undo();draw_all();">Undo</button><button onClick="redo();draw_all();">Redo</button></div><div id="message" > </div></div>
+
+      
+      <div style="position: absolute; top:610px;left:1110px;border:1px solid black; height:120px; width:400px" ><textarea id="misc_text"></textarea><textarea id="misc_text"></textarea><br /><button onClick="get_point_coords()">Get point coords</button><button onClick="bulk_add()">Bulk add</button><button onClick="matrix_misc()">Matrix</button><button onClick="document.getElementById('misc_text').value = JSON.stringify(JSON.parse(document.getElementById('misc_text').value).reverse())">Reverse</button></div>
+
       <textarea id="data"></textarea><button onClick="display.selected_shape = undefined; display.selected_point = undefined; change(); "> Unselect all</button>Points display : <select name="cars" id="cars" onChange="display.show_points = arguments[0].target.selectedOptions[0].innerText;change();">
         <option >all</option>
         <option >layer</option>
@@ -41,6 +45,7 @@ z(window,window,window,window,window,window,window,window,window,window,window,w
         <option>layer</option>
         <option >shape</option>
       </select>
+      <br />
       <input type="checkbox" onchange="display.show_labels = arguments[0].target.checked; change();"/>Labels
 	  <input type="checkbox" onchange="display.true_points = arguments[0].target.checked; change();"/>True Points
       <button onClick="document.getElementById(`bigc`).focus({'focusVisible':true});change();">update</button>
@@ -52,7 +57,7 @@ z(window,window,window,window,window,window,window,window,window,window,window,w
       <br />
       B : wrap translation matrix
       <br />
-        1 : line, 2 : bezier, 3 : smooth bezier, 4 : polygon, 5 : circle, 6 : bezier shape, 7 : smooth bezier shape
+        1 : line, 2 : bezier, 3 : smooth bezier, 4 : polygon, 5 : circle, 6 : ellipse, 7 : bezier shape, 8 : smooth bezier shape
         <br />
         line, bezier and smooth bezier ignores fill
         <br /> 
@@ -101,7 +106,7 @@ function load(){
     document.getElementById("bigc").addEventListener("mousemove", function(e){ 
         mouse_loc = [e.offsetX, e.offsetY];
         let world_coords = screen_to_world(mouse_loc, display.zoom)
-        document.getElementById("point_loc").innerHTML = `<button onClick="display.zoom = [0,0,1];change();">Reset zoom</button>screen coord : ${Math.floor(mouse_loc[0])},${Math.floor(mouse_loc[1])} , world coord  ${Math.floor(world_coords[0])},${Math.floor(world_coords[1])}<br /> current zoom : ${[Math.floor(display.zoom[0]), Math.floor(display.zoom[1]), display.zoom[2].toString().substr(0, 5)]}<br /> Current point selected : ${display.selected_point ?? "None"}`
+        document.getElementById("point_loc").innerHTML = `<button onClick="display.zoom = [0,0,1];change();">Reset zoom</button><br />screen ${Math.floor(mouse_loc[0])},${Math.floor(mouse_loc[1])} , world ${Math.floor(world_coords[0])},${Math.floor(world_coords[1])}<br /> current zoom : ${[Math.floor(display.zoom[0]), Math.floor(display.zoom[1]), display.zoom[2].toString().substr(0, 5)]}<br /> Selected point : ${display.selected_point ?? "None"}`
     })
     document.getElementById("bigc").addEventListener("click", function(e){ 
         click([e.offsetX, e.offsetY], ctrl_flag);
@@ -253,10 +258,84 @@ function apply_m3(type){ // layer tag shape or all
     } catch(e){
         document.getElementById("message").innerHTML = e;
     }
+}
 
+function get_point_coords(){
+    let points = list_shapes(display)[display.selected_shape][0].points
+    let points_dict = display.points.reduce((prev , next) => { prev[next[0]] = [next[1], next[2]]; return prev} , {}); 
+    let coords = points.map(x => lincomb(1, points_dict[x[0]], 1, x.slice(1)))
+    document.getElementById("misc_text").value = JSON.stringify(coords);
+}
+function bulk_add(){
+    let points = JSON.parse(document.getElementById("misc_text").value)
+    let verify = window.z.array(window.z.tuple([window.z.number(), window.z.number()]))
+    let result = verify.safeParse(points)
 
+    if(result.success){
+        for(let point of points){
+            add_point(display, point);
+
+        }
+        change();
+    } else {
+        document.getElementById("message").innerHTML = result.error.toString();
+        // throw "not valid display total";
+    }
 
 }
+
+
+function apply_m3(type){ // layer tag shape or all
+    try{
+        let mats = document.getElementById("matrix3").value 
+        mats = mats.split("\n").filter(x => x.indexOf("[") != -1).map(x => JSON.parse(x)); 
+        if(_.some(mats, x => matrix3Schema.safeParse(x).success == false)){
+            throw "not valid matrix3";
+        }
+        mats.forEach(x => apply_matrix3(display, x, type));
+        change();
+    } catch(e){
+        document.getElementById("message").innerHTML = e;
+    }
+}
+
+function matrix_misc(){
+    let points = JSON.parse(document.getElementById("misc_text").value)
+    let verify = window.z.array(window.z.tuple([window.z.number(), window.z.number()]))
+    let result = verify.safeParse(points)
+
+    let mats = document.getElementById("matrix3").value 
+    mats = mats.split("\n").filter(x => x.indexOf("[") != -1).map(x => JSON.parse(x)); 
+    for(let mat of mats){
+        let result2 = matrix3Schema.safeParse(mat)
+        if(result2.success == false){
+            result = result2;
+            break; 
+        }
+    }
+    let out_points = [];
+    if(result.success){
+        for(let point of points){
+            // MATRIX
+            point.push(1);
+            for(let mat of mats){
+                point = Mv(mat, point);
+            }
+            if(point[2] == 0){
+                document.getElementById("message").innerHTML = "matrix div_0 ";
+                return; 
+            }
+            out_points.push([point[0]/point[2], point[1]/point[2]])
+        }
+        document.getElementById("misc_text").value = JSON.stringify(out_points)
+        draw_all();
+    } else {
+        document.getElementById("message").innerHTML = result.error.toString();
+        // throw "not valid display total";
+    }
+
+}
+
 </script>
 
 

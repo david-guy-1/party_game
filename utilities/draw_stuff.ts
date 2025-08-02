@@ -1,5 +1,5 @@
 
-import { add_com, d_bezier, d_circle, d_line, d_smoothbezier, d_text, drawLine, drawPolygon, dist, flatten, lincomb, draw_wrap, draw_command, drawBezierCurve_command, drawBezierShape_command, drawCircle_command, drawPolygon_command, fillstyle, point3d, displace_command, scale_command, Mv, scalar_multiple, taxicab_dist, insert_after } from "./a"
+import { add_com, d_bezier, d_circle, d_line, d_smoothbezier, d_text, drawLine, drawPolygon, dist, flatten, lincomb, draw_wrap, draw_command, drawBezierCurve_command, drawBezierShape_command, drawCircle_command, drawPolygon_command, fillstyle, point3d, displace_command, scale_command, Mv, scalar_multiple, taxicab_dist, insert_after, drawEllipse_command, d_ellipse2, drawEllipseCR_command } from "./a"
 import * as _ from "lodash"
 
 /* zod : 
@@ -101,7 +101,7 @@ function point_fill_to_fill(f: point_fill, points : named_point[]) : string | fi
 type outline = {"thickness" : number, "color":string}
 
 //"line"|"bezier"|"smooth bezier" are curve-like and cannot have interiors
-type shape_types = "line"|"bezier"|"smooth bezier"|"polygon"|"circle"|"bezier shape"|"smooth bezier shape"
+type shape_types = "line"|"bezier"|"smooth bezier"|"polygon"|"circle"|"bezier shape"|"smooth bezier shape"|"ellipse"
 type shape = {
     "parent_layer" : string 
     "points" : [string, number, number][] // name, offsetx offsety
@@ -373,6 +373,37 @@ function output(d : display_total, ignore_exceptions = false) : draw_command[]{
                     }
 
                 break
+                case "ellipse":
+                    {
+                    if(shape.fill == undefined && shape.outline == undefined){
+                        if(ignore_exceptions == true){
+                            continue
+                        } else {
+                            throw "fill and color are both undefined;"
+                        }
+                    }
+                    let pts  = JSON.parse(JSON.stringify(points)) as point[]
+                    if(pts.length  < 3){
+                        continue
+                    } 
+                    
+                    let cmd5 :drawEllipseCR_command = d_ellipse2(pts[0], dist(pts[0], pts[1]), dist(pts[0], pts[2] ) );
+                    let diff = lincomb(1, pts[1], -1, pts[0])
+                    let angle = Math.atan2(diff[1], diff[0]); 
+                    cmd5.rotate = angle; 
+
+                    if(shape.fill){
+                        cmd5.fill = true; 
+                        cmd5.color = point_fill_to_fill(shape.fill,d.points);
+                        result.push(cmd5);
+                    };
+                    if(shape.outline&& shape.outline_visible){
+                        cmd5.fill = false; 
+                        cmd5.stroke_width = shape.outline.thickness;
+                        cmd5.color = shape.outline.color
+                        result.push(cmd5);                    }
+                    }
+                break;
                 case "smooth bezier shape":
                     // color, fill, type, width , points_x, points_y
 
@@ -544,14 +575,14 @@ function shape_exists(d : display_total, s : string){
 
 
 function selected_shape_visible(d : display_total){
-    if(display.selected_shape == undefined){
+    if(d.selected_shape == undefined){
         return false; // if the shape doesn't exist, it's not visible
     }
-    let shape = list_shapes(display)[display.selected_shape][0]
+    let shape = list_shapes(d)[d.selected_shape][0]
     if(!shape.visible){
         return false; 
     }
-    return display.layer_visibility[ shape.parent_layer];
+    return d.layer_visibility[ shape.parent_layer];
 }
 
 function get_closest_point(d : display_total, p : point, visible: boolean = true) : string{
@@ -1315,9 +1346,13 @@ function keypress(point : point, key : string){
         add_new_shape(display, display.selected_layer,  "circle", point)
     }
     else if(key == "6"){
+        add_new_shape(display, display.selected_layer,  "ellipse", point)
+    }
+
+    else if(key == "7"){
         add_new_shape(display, display.selected_layer,  "bezier shape", point)
     }
-    else if(key == "7"){
+    else if(key == "8"){
         add_new_shape(display, display.selected_layer,  "smooth bezier shape", point)
     }
     else { 
@@ -1341,10 +1376,10 @@ function scroll_wheel( point : point ,up : boolean){
 function move_points_in_shape(d : display_total, shape : string, amt : point){
     let shape_obj = list_shapes(d)[shape][0];
     let to_move = get_points(shape_obj)
-    for(let [i, pt ] of display.points.entries()){
+    for(let [i, pt ] of d.points.entries()){
         if(to_move.has(pt[0])){
-            display.points[i][1] += amt[0];
-            display.points[i][2] += amt[1];
+            d.points[i][1] += amt[0];
+            d.points[i][2] += amt[1];
         }
     }
 }

@@ -41,7 +41,7 @@ It then runs the following event loop:
 
     for every render frame : 
 
-        call the prop_commands(g, globalStore, events), which returns a list of prop functions (functions passed in as props to GameDisplay). Each element in the list is a pair, the first one specifying the name of the function, and the second one is the argument. the prop function takes in arguments: (g, globalStore, second argument). Special cases : if the first element is "rerender" , the game is re-rendered, if it's "reset", reset() is called and the game is re-rendered, if it's "change display", then the display is set to the second element in the pair (which causes a re-render).
+        call the prop_commands(g, globalStore, events), which returns a list of prop functions (functions passed in as props to GameDisplay). Each element in the list is a pair, the first one specifying the name of the function, and the second one is the argument. the prop function takes in arguments: (g, globalStore, second element in list). Special cases : if the first element is "rerender" , the game is re-rendered, if it's "reset", reset() is called and the game is re-rendered, if it's "change display", then the display is set to the second element in the pair (which causes a re-render).
 
         call sound_fn(game, list of events) that outputs a pair [newsound : string, playsounds : string[]], first is the new BGM, second is a list of sound effects. - this only changes the BGM if it's different from the current one.
 
@@ -50,6 +50,19 @@ It then runs the following event loop:
         calls anim_fn(g, event list), which returns a list of animations, then updates and draws them - calls each update and draw function with (g, globalStore).
 
 When a button is clicked, button_click(game, globalStore, name of button) is called, it returns the same list as prop_commands: a list of functions to call, and arguments  
+
+
+----
+
+img_with_center is a class that can be used to avoid drawing multiple shapes, and replace them with an image. 
+
+construct it with the following parameters : commands, x, y, width, height. 
+
+It draws the commands on a fresh canvas, takes the top-left width/height portion (so anything with negative x and y coords are gone).
+
+Then , it sets the given x and y origin. 
+
+then, call its "output" method with an x and y, it returns a drawImage_command. The class's x and y and the given x and y will line up. 
 
 ----
 

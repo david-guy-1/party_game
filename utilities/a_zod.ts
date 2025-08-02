@@ -29,13 +29,6 @@ export const fillConicSchema = z.object({
   colorstops: z.array(z.tuple([z.number(), z.string()])),
 });
 
-export const fillstyleSchema = z.union([
-  z.string(),
-  fillLinearSchema,
-  fillRadialSchema,
-  fillConicSchema,
-]);
-
 export const bezierSchema = z.tuple([
   z.number(),
   z.number(),
@@ -62,28 +55,100 @@ export const drawLineCommandSchema = z.object({
   width: z.number().optional(),
 });
 
-export const drawCircleCommandSchema = z.object({
-  type: z.literal("drawCircle"),
+export const drawTextCommandSchema = z.object({
+  type: z.literal("drawText"),
+  text_: z.string(),
   x: z.number(),
   y: z.number(),
-  r: z.number(),
-  color: fillstyleSchema.optional(),
-  width: z.number().optional(),
-  fill: z.boolean().optional(),
-  transparency: z.number().optional(),
-  start: z.number().optional(),
-  end: z.number().optional(),
+  width: z.union([z.number(), z.undefined()]).optional(),
+  color: z.string().optional(),
+  size: z.number().optional(),
+  font: z.string().optional(),
 });
 
-export const drawPolygonCommandSchema = z.object({
-  type: z.literal("drawPolygon"),
-  points_x: z.array(z.number()),
-  points_y: z.array(z.number()),
-  color: fillstyleSchema.optional(),
-  width: z.number().optional(),
-  fill: z.boolean().optional(),
-  transparency: z.number().optional(),
+const pointSchema = z.tuple([z.number(), z.number()]);
+
+const rectSchema = z.tuple([z.number(), z.number(), z.number(), z.number()]);
+
+const namedPointSchema = z.tuple([z.string(), z.number(), z.number()]);
+
+const pointFillLinearSchema = z.object({
+  type: z.literal("fill_linear"),
+  p0: z.string(),
+  p1: z.string(),
+  colorstops: z.array(z.tuple([z.number(), z.string()])),
 });
+
+const pointFillRadialSchema = z.object({
+  type: z.literal("fill_radial"),
+  p0: z.string(),
+  p1: z.string(),
+  r0: z.number(),
+  r1: z.number(),
+  colorstops: z.array(z.tuple([z.number(), z.string()])),
+});
+
+const pointFillConicSchema = z.object({
+  type: z.literal("fill_conic"),
+  p0: z.string(),
+  theta: z.number(),
+  colorstops: z.array(z.tuple([z.number(), z.string()])),
+});
+
+const pointFillSchema = z.union([
+  z.string(),
+  pointFillLinearSchema,
+  pointFillRadialSchema,
+  pointFillConicSchema,
+]);
+
+const outlineSchema = z.object({
+  thickness: z.number(),
+  color: z.string(),
+});
+
+const shapeTypesSchema = z.union([
+  z.literal("line"),
+  z.literal("bezier"),
+  z.literal("smooth bezier"),
+  z.literal("polygon"),
+  z.literal("circle"),
+  z.literal("ellipse"),
+  z.literal("bezier shape"),
+  z.literal("smooth bezier shape"),
+]);
+
+const shapeSchema = z.object({
+  parent_layer: z.string(),
+  points: z.array(z.tuple([z.string(), z.number(), z.number()])),
+  name: z.string(),
+  type: shapeTypesSchema,
+  fill: z.union([z.string(), pointFillSchema]).optional(),
+  outline: outlineSchema.optional(),
+  visible: z.boolean(),
+  outline_visible: z.boolean(),
+  insertion_point: z.string().optional(),
+  tag: z.array(z.string()),
+});
+
+const layerSchema = z.object({
+  name: z.string(),
+  shapes: z.array(shapeSchema),
+});
+
+const fillstyleSchema = z.any();
+
+const drawCircleCommandSchema = z.any();
+
+const drawPolygonCommandSchema = z.any();
+
+const drawBezierCurveCommandSchema = z.any();
+
+const drawBezierShapeCommandSchema = z.any();
+
+const drawCommandSchema = z.any();
+
+const point3dSchema = z.any();
 
 export const drawRectangleCommandSchema = z.object({
   type: z.literal("drawRectangle"),
@@ -109,17 +174,6 @@ export const drawRectangle2CommandSchema = z.object({
   transparency: z.number().optional(),
 });
 
-export const drawTextCommandSchema = z.object({
-  type: z.literal("drawText"),
-  text_: z.string(),
-  x: z.number(),
-  y: z.number(),
-  width: z.union([z.number(), z.undefined()]).optional(),
-  color: z.string().optional(),
-  size: z.number().optional(),
-  font: z.string().optional(),
-});
-
 export const drawEllipseCommandSchema = z.object({
   type: z.literal("drawEllipse"),
   posx: z.number(),
@@ -131,6 +185,8 @@ export const drawEllipseCommandSchema = z.object({
   rotate: z.number().optional(),
   start: z.number().optional(),
   end: z.number().optional(),
+  fill: z.boolean().optional(),
+  stroke_width: z.number().optional(),
 });
 
 export const drawEllipseCRCommandSchema = z.object({
@@ -144,42 +200,8 @@ export const drawEllipseCRCommandSchema = z.object({
   rotate: z.number().optional(),
   start: z.number().optional(),
   end: z.number().optional(),
-});
-
-export const drawEllipse2CommandSchema = z.object({
-  type: z.literal("drawEllipse2"),
-  posx: z.number(),
-  posy: z.number(),
-  width: z.number(),
-  height: z.number(),
-  color: fillstyleSchema.optional(),
-  transparency: z.number().optional(),
-  rotate: z.number().optional(),
-  start: z.number().optional(),
-  end: z.number().optional(),
-});
-
-export const drawBezierCurveCommandSchema = z.object({
-  type: z.literal("drawBezierCurve"),
-  x: z.number(),
-  y: z.number(),
-  p1x: z.number(),
-  p1y: z.number(),
-  p2x: z.number(),
-  p2y: z.number(),
-  p3x: z.number(),
-  p3y: z.number(),
-  color: fillstyleSchema.optional(),
-  width: z.number().optional(),
-});
-
-export const drawBezierShapeCommandSchema = z.object({
-  type: z.literal("drawBezierShape"),
-  x: z.number(),
-  y: z.number(),
-  curves: z.array(bezierSchema),
-  color: fillstyleSchema.optional(),
-  width: z.number().optional(),
+  fill: z.boolean().optional(),
+  stroke_width: z.number().optional(),
 });
 
 export const drawRoundedRectangleCommandSchema = z.object({
@@ -195,29 +217,25 @@ export const drawRoundedRectangleCommandSchema = z.object({
   fill: z.boolean().optional(),
 });
 
-export const drawCommandSchema = z.union([
-  drawImageCommandSchema,
-  drawLineCommandSchema,
-  drawCircleCommandSchema,
-  drawPolygonCommandSchema,
-  drawRectangleCommandSchema,
-  drawRectangle2CommandSchema,
-  drawTextCommandSchema,
-  drawEllipseCommandSchema,
-  drawEllipseCRCommandSchema,
-  drawEllipse2CommandSchema,
-  drawBezierCurveCommandSchema,
-  drawBezierShapeCommandSchema,
-  drawRoundedRectangleCommandSchema,
-]);
+const displayTotalSchema = z.object({
+  points: z.array(namedPointSchema),
+  layers: z.array(layerSchema),
+  zoom: point3dSchema,
+  layer_visibility: z.record(z.boolean()),
+  show_points: z.union([
+    z.literal("none"),
+    z.literal("shape"),
+    z.literal("layer"),
+    z.literal("all"),
+  ]),
+  show_labels: z.boolean(),
+  selected_point: z.string().optional(),
+  selected_shape: z.string().optional(),
+  selected_layer: z.string(),
+  true_points: z.boolean(),
+  total_points: z.number(),
+  total_shapes: z.number(),
+  message: z.string(),
+});
 
-export const pointSchema = z.tuple([z.number(), z.number()]);
-
-export const point3dSchema = z.tuple([z.number(), z.number(), z.number()]);
-
-export const rectSchema = z.tuple([
-  z.number(),
-  z.number(),
-  z.number(),
-  z.number(),
-]);
+const matrix3Schema = z.tuple([point3dSchema, point3dSchema, point3dSchema]);

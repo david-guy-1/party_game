@@ -1,3 +1,5 @@
+// for transparency, 1 is opaque and 0 is transparent
+
 export type fill_linear  = {
 "type":"fill_linear",
 "x0" : number,
@@ -30,6 +32,8 @@ export type fillstyle = string | fill_linear | fill_radial | fill_conic
 export type bezier = [number, number, number, number, number, number];
 
 // start replacing HERE
+
+// x, y are top left
 export type drawImage_command = {
 "type" : "drawImage",
 "img" : string,
@@ -116,6 +120,8 @@ export type drawEllipse_command = {
 "rotate" ?: number,
 "start" ?: number,
 "end" ?: number,
+"fill"?:boolean,
+"stroke_width"?:number
 }
 
 export type drawEllipseCR_command = {
@@ -129,20 +135,10 @@ export type drawEllipseCR_command = {
 "rotate" ?: number,
 "start" ?: number,
 "end" ?: number,
+"fill"?:boolean,
+"stroke_width"?:number
 }
 
-export type drawEllipse2_command = {
-"type" : "drawEllipse2",
-"posx" : number,
-"posy" : number,
-"width" : number,
-"height" : number,
-"color" ?: fillstyle,
-"transparency" ?: number,
-"rotate" ?: number,
-"start" ?: number,
-"end" ?: number,
-}
 
 export type drawBezierCurve_command = {
 "type" : "drawBezierCurve",
@@ -180,7 +176,7 @@ export type drawRoundedRectangle_command = {
 "fill" ?: boolean,
 }
 
-export type draw_command = drawImage_command|drawLine_command|drawCircle_command|drawPolygon_command|drawRectangle_command|drawRectangle2_command|drawText_command|drawEllipse_command|drawEllipseCR_command|drawEllipse2_command|drawBezierCurve_command|drawBezierShape_command|drawRoundedRectangle_command
+export type draw_command = drawImage_command|drawLine_command|drawCircle_command|drawPolygon_command|drawRectangle_command|drawRectangle2_command|drawText_command|drawEllipse_command|drawEllipseCR_command|drawBezierCurve_command|drawBezierShape_command|drawRoundedRectangle_command
 // put this into get_type.py, enter "DONE" (no quotes).
 
 
@@ -335,23 +331,34 @@ context.fillText(text_, x,y,width);
 }
 
 // see drawRectangle
-export function drawEllipse(context :CanvasRenderingContext2D, posx : number, posy : number, brx : number, bry : number ,color : fillstyle="black", transparency : number =1, rotate : number = 0, start :number= 0 , end :number= 2*Math.PI){
+export function drawEllipse(context :CanvasRenderingContext2D, posx : number, posy : number, brx : number, bry : number ,color : fillstyle="black", transparency : number =1, rotate : number = 0, start :number= 0 , end :number= 2*Math.PI, fill=false,stroke_width=1){
 noNaN(arguments as any as any[][]);
-drawEllipse2( context, posx, posy, brx-posx, bry-posy ,color, transparency, rotate, start, end)
+drawEllipse2( context, posx, posy, brx-posx, bry-posy ,color, transparency, rotate, start, end,fill, stroke_width)
 }
 //draw ellipse with center and radii
-export function drawEllipseCR(context :CanvasRenderingContext2D, cx : number, cy : number, rx : number, ry  : number,color : fillstyle="black", transparency : number =1, rotate : number = 0, start :number= 0 , end :number= 2*Math.PI){
+export function drawEllipseCR(context :CanvasRenderingContext2D, cx : number, cy : number, rx : number, ry  : number,color : fillstyle="black", transparency : number =1, rotate : number = 0, start :number= 0 , end :number= 2*Math.PI, fill=false,stroke_width=1){
 noNaN(arguments as any as any[][]);
-drawEllipse2(context, cx-rx, cy-ry, 2*rx, 2*ry ,color, transparency, rotate, start, end)
+drawEllipse2(context, cx-rx, cy-ry, 2*rx, 2*ry ,color, transparency, rotate, start, end, fill, stroke_width)
 }
 
-export function drawEllipse2(context :CanvasRenderingContext2D, posx : number, posy : number, width : number, height : number ,color : fillstyle="black", transparency : number =1,rotate : number = 0, start :number= 0 , end :number= 2*Math.PI){
+// base class, others call this class
+export function drawEllipse2(context :CanvasRenderingContext2D, posx : number, posy : number, width : number, height : number ,color : fillstyle="black", transparency : number =1,rotate : number = 0, start :number= 0 , end :number= 2*Math.PI, fill=false,stroke_width=1){
 noNaN(arguments as any as any[][]);
 context.beginPath();
 context.fillStyle=make_style(context, color)
 context.globalAlpha = transparency;
 context.ellipse(posx+width/2, posy+height/2, width/2, height/2,rotate, start, end);
+
+if(fill){
+context.globalAlpha = transparency;
+context.fillStyle = make_style(context, color);
 context.fill();
+context.globalAlpha = 1;
+} else {
+context.lineWidth = stroke_width;
+context.strokeStyle = make_style(context, color);
+context.stroke();
+}
 context.globalAlpha = 1;
 }
 
@@ -455,6 +462,14 @@ if(x.length != 4){
 throw "draw line without enough arguments"
 }
 return {"type":"drawLine", "x0" : x[0], "y0" : x[1], "x1" : x[2], "y1" : x[3]}
+}
+
+export function d_line2(...args : (number | number[])[] ) : drawLine_command{
+let x = flatten_all(args) as number[] ;
+if(x.length != 4){
+throw "draw line without enough arguments"
+}
+return {"type":"drawLine", "x0" : x[0], "y0" : x[1], "x1" : x[0]+x[2], "y1" : x[1]+x[3]}
 }
 
 
@@ -618,13 +633,10 @@ case "drawText":
 drawText(c, item.text_,item.x,item.y,item.width,item.color,item.size, item.font);
 break;
 case "drawEllipse":
-drawEllipse(c, item.posx,item.posy,item.brx,item.bry,item.color,item.transparency,item.rotate,item.start,item.end);
+drawEllipse(c, item.posx,item.posy,item.brx,item.bry,item.color,item.transparency,item.rotate,item.start,item.end, item.fill, item.stroke_width);
 break;
 case "drawEllipseCR":
-drawEllipseCR(c, item.cx,item.cy,item.rx,item.ry,item.color,item.transparency,item.rotate,item.start,item.end);
-break;
-case "drawEllipse2":
-drawEllipse2(c, item.posx,item.posy,item.width,item.height,item.color,item.transparency,item.rotate,item.start,item.end);
+drawEllipseCR(c, item.cx,item.cy,item.rx,item.ry,item.color,item.transparency,item.rotate,item.start,item.end, item.fill, item.stroke_width);
 break;
 case "drawBezierCurve":
 drawBezierCurve(c, item.x,item.y,item.p1x,item.p1y,item.p2x,item.p2y,item.p3x,item.p3y,item.color,item.width);
@@ -794,7 +806,6 @@ case "drawRectangle":
 case "drawRectangle2":
 case "drawEllipse":
 case "drawEllipseCR":
-case "drawEllipse2":
 case "drawBezierCurve":
 case "drawBezierShape":
 case "drawRoundedRectangle":
@@ -841,11 +852,6 @@ new_command.posx += amt[0];
 new_command.posy += amt[1];
 new_command.brx += amt[0];
 new_command.bry += amt[1];
-break;
-case "drawEllipse2":
-new_command = new_command as drawEllipse2_command;
-new_command.posx += amt[0];
-new_command.posy += amt[1];
 break;
 case "drawEllipseCR":
 new_command = new_command as drawEllipseCR_command;
@@ -894,7 +900,6 @@ case "drawRectangle":
 case "drawRectangle2":
 case "drawEllipse":
 case "drawEllipseCR":
-case "drawEllipse2":
 case "drawBezierCurve":
 case "drawBezierShape":
 case "drawRoundedRectangle":
@@ -934,7 +939,7 @@ new_command.x = scale_number(new_command.x, center[0], x_amt);
 new_command.y = scale_number(new_command.y, center[1], y_amt);
 break;
 case "drawCircle": // converted into drawEllipse
-var command_c : draw_command = {type:"drawEllipseCR", cx  : command.x, cy : command.y , rx : command.r, ry : command.r, color : command.color, transparency : command.transparency, start : command.start, end : command.end }
+var command_c : drawEllipseCR_command = {type:"drawEllipseCR", cx  : command.x, cy : command.y , rx : command.r, ry : command.r, color : command.color, transparency : command.transparency, start : command.start, end : command.end ,fill: command.fill, stroke_width : command.width, }
 return scale_command(command_c, center, x_amt, y_amt);
 break;
 case "drawEllipse": // all ellipses are converted into CR format
@@ -942,12 +947,6 @@ var rx = (command.brx - command.posx)/2
 var ry = (command.bry - command.posy)/2
 var centerE :point = [command.posx + rx,command.posy + ry];
 return scale_command({type:"drawEllipseCR", cx  : centerE[0], cy : centerE[1] , rx : rx, ry : ry, color : command.color, transparency : command.transparency, rotate : command.rotate, start : command.start, end : command.end }, center, x_amt, y_amt) // check the last 3
-break;
-case "drawEllipse2":
-var rx = command.width /2
-var ry = command.height/2
-var centerE :point = [command.posx + rx,command.posy + ry];
-return scale_command({type:"drawEllipseCR", cx  : centerE[0], cy : centerE[1] , rx : rx, ry : ry, color : command.color, transparency : command.transparency, rotate : command.rotate, start : command.start, end : command.end },  center, x_amt, y_amt)
 break;
 case "drawEllipseCR":
 new_command = new_command as drawEllipseCR_command;
@@ -1000,7 +999,6 @@ case "drawRectangle":
 case "drawRectangle2":
 case "drawEllipse":
 case "drawEllipseCR":
-case "drawEllipse2":
 case "drawBezierCurve":
 case "drawBezierShape":
 case "drawRoundedRectangle":
@@ -1040,12 +1038,6 @@ var rx = (command.brx - command.posx)/2
 var ry = (command.bry - command.posy)/2
 var center :point = [command.posx + rx,command.posy + ry];
 return rotate_command({type:"drawEllipseCR", cx  : center[0], cy : center[1] , rx : rx, ry : ry, color : command.color, transparency : command.transparency, rotate : command.rotate, start : command.start, end : command.end }, origin, amt) // check the last 3
-break;
-case "drawEllipse2":
-var rx = command.width /2
-var ry = command.height/2
-var center :point = [command.posx + rx,command.posy + ry];
-return rotate_command({type:"drawEllipseCR", cx  : center[0], cy : center[1] , rx : rx, ry : ry, color : command.color, transparency : command.transparency, rotate : command.rotate, start : command.start, end : command.end }, origin, amt)
 break;
 case "drawEllipseCR":
 new_command = new_command as drawEllipseCR_command;
@@ -1165,6 +1157,7 @@ lst[n+1] = tmp;
 lst[n] = tmp2;
 }
 }
+return lst;
 }
 
 // mutates
@@ -1172,6 +1165,7 @@ export function combine_obj(obj : Record<string,any>,obj2 : Record<string,any>){
 for(let item of Object.keys(obj2)){
 obj[item] = obj2[item];
 }
+return obj
 }
 
 // these two are used when the values in the hash table are lists
@@ -1180,6 +1174,7 @@ if(obj[k] == undefined){
 obj[k] = [];
 }
 obj[k].push(v);
+return obj;
 }
 
 export function concat_obj<K extends string | number | symbol, V>(obj : Record<K,V[]>, k : K, v : V[]){
@@ -1187,6 +1182,7 @@ if(obj[k] == undefined){
 obj[k] = [];
 }
 obj[k] = obj[k].concat(v);
+return obj;
 }
 
 export function noNaN(lst : any[]) {
@@ -1765,7 +1761,28 @@ if(amt != undefined){
 target = moveTo(point,target,amt) as point;
 }
 for(let w of walls){
+if(dist(point, target) < epsilon){
+break;
+}
 if(doLinesIntersect(point, target, w)){
+let intersection = getIntersection(pointToCoefficients(point, target), pointToCoefficients(w));
+// target = intersection + (start - intersection) normalized to 0.01
+target = lincomb(1, intersection, 1, normalize(lincomb(1, point, -1, intersection), epsilon)) as point;
+}
+}
+return target
+}
+
+export function move_wallWH(point : point ,walls :[number,number,number,number][], target : point, amt? : number, epsilon : number = 0.001) : point{
+if(amt != undefined){
+target = moveTo(point,target,amt) as point;
+}
+
+for(let w of walls){
+if(dist(point, target) < epsilon){
+break;
+}
+if(doLinesIntersect(point, target, [w[0], w[1], w[0]+w[2], w[1]+w[3]])){
 let intersection = getIntersection(pointToCoefficients(point, target), pointToCoefficients(w));
 // target = intersection + (start - intersection) normalized to 0.01
 target = lincomb(1, intersection, 1, normalize(lincomb(1, point, -1, intersection), epsilon)) as point;

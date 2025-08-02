@@ -1,0 +1,38 @@
+<html>
+<head>
+<script type="text/javascript">
+
+function main(){
+}
+
+function set(s){
+	document.getElementById("text").value = s;
+}
+
+function set_json(s){
+	document.getElementById("text").value = JSON.stringify(s);
+}
+function get(){
+	return document.getElementById("text").value;
+}
+function get_json(){
+	return JSON.stringify(get);
+}
+</script>
+
+</head>
+<body onload = "main()">
+<canvas width=1000 height=700 id="canvas_obj"></canvas>
+<textarea id="text"></textarea>
+<script type="text/javascript" src="a.js"></script>
+<script type="text/javascript" src="lodash.js"></script>
+</body>
+<script type="text/javascript">
+c = document.getElementById("canvas_obj").getContext("2d");
+	
+// put your code here to play around with!
+
+
+
+</script>
+</html>

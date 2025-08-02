@@ -1,4 +1,6 @@
+// for transparency, 1 is opaque and 0 is transparent
 // put this into get_type.py, enter "DONE" (no quotes).
+//import { point } from "./interfaces";
 //import { add_obj, combine_obj, flatten, flatten_all, lincomb, noNaN, normalize } from "./lines";
 var imgStrings = {};
 function make_style(ctx, style) {
@@ -139,22 +141,33 @@ function drawText(context, text_, x, y, width = undefined, color = "black", size
     }
 }
 // see drawRectangle
-function drawEllipse(context, posx, posy, brx, bry, color = "black", transparency = 1, rotate = 0, start = 0, end = 2 * Math.PI) {
+function drawEllipse(context, posx, posy, brx, bry, color = "black", transparency = 1, rotate = 0, start = 0, end = 2 * Math.PI, fill = false, stroke_width = 1) {
     noNaN(arguments);
-    drawEllipse2(context, posx, posy, brx - posx, bry - posy, color, transparency, rotate, start, end);
+    drawEllipse2(context, posx, posy, brx - posx, bry - posy, color, transparency, rotate, start, end, fill, stroke_width);
 }
 //draw ellipse with center and radii
-function drawEllipseCR(context, cx, cy, rx, ry, color = "black", transparency = 1, rotate = 0, start = 0, end = 2 * Math.PI) {
+function drawEllipseCR(context, cx, cy, rx, ry, color = "black", transparency = 1, rotate = 0, start = 0, end = 2 * Math.PI, fill = false, stroke_width = 1) {
     noNaN(arguments);
-    drawEllipse2(context, cx - rx, cy - ry, 2 * rx, 2 * ry, color, transparency, rotate, start, end);
+    drawEllipse2(context, cx - rx, cy - ry, 2 * rx, 2 * ry, color, transparency, rotate, start, end, fill, stroke_width);
 }
-function drawEllipse2(context, posx, posy, width, height, color = "black", transparency = 1, rotate = 0, start = 0, end = 2 * Math.PI) {
+// base class, others call this class
+function drawEllipse2(context, posx, posy, width, height, color = "black", transparency = 1, rotate = 0, start = 0, end = 2 * Math.PI, fill = false, stroke_width = 1) {
     noNaN(arguments);
     context.beginPath();
     context.fillStyle = make_style(context, color);
     context.globalAlpha = transparency;
     context.ellipse(posx + width / 2, posy + height / 2, width / 2, height / 2, rotate, start, end);
-    context.fill();
+    if (fill) {
+        context.globalAlpha = transparency;
+        context.fillStyle = make_style(context, color);
+        context.fill();
+        context.globalAlpha = 1;
+    }
+    else {
+        context.lineWidth = stroke_width;
+        context.strokeStyle = make_style(context, color);
+        context.stroke();
+    }
     context.globalAlpha = 1;
 }
 function drawBezierCurve(context, x, y, p1x, p1y, p2x, p2y, p3x, p3y, color = "black", width = 1) {
@@ -244,6 +257,13 @@ function d_line(...args) {
         throw "draw line without enough arguments";
     }
     return { "type": "drawLine", "x0": x[0], "y0": x[1], "x1": x[2], "y1": x[3] };
+}
+function d_line2(...args) {
+    let x = flatten_all(args);
+    if (x.length != 4) {
+        throw "draw line without enough arguments";
+    }
+    return { "type": "drawLine", "x0": x[0], "y0": x[1], "x1": x[0] + x[2], "y1": x[1] + x[3] };
 }
 function d_circle(...args) {
     let x = flatten_all(args);
@@ -394,13 +414,10 @@ function draw_wrap(lst, c) {
                 drawText(c, item.text_, item.x, item.y, item.width, item.color, item.size, item.font);
                 break;
             case "drawEllipse":
-                drawEllipse(c, item.posx, item.posy, item.brx, item.bry, item.color, item.transparency, item.rotate, item.start, item.end);
+                drawEllipse(c, item.posx, item.posy, item.brx, item.bry, item.color, item.transparency, item.rotate, item.start, item.end, item.fill, item.stroke_width);
                 break;
             case "drawEllipseCR":
-                drawEllipseCR(c, item.cx, item.cy, item.rx, item.ry, item.color, item.transparency, item.rotate, item.start, item.end);
-                break;
-            case "drawEllipse2":
-                drawEllipse2(c, item.posx, item.posy, item.width, item.height, item.color, item.transparency, item.rotate, item.start, item.end);
+                drawEllipseCR(c, item.cx, item.cy, item.rx, item.ry, item.color, item.transparency, item.rotate, item.start, item.end, item.fill, item.stroke_width);
                 break;
             case "drawBezierCurve":
                 drawBezierCurve(c, item.x, item.y, item.p1x, item.p1y, item.p2x, item.p2y, item.p3x, item.p3y, item.color, item.width);
@@ -559,7 +576,6 @@ function displace_command(command, amt) {
         case "drawRectangle2":
         case "drawEllipse":
         case "drawEllipseCR":
-        case "drawEllipse2":
         case "drawBezierCurve":
         case "drawBezierShape":
         case "drawRoundedRectangle":
@@ -607,11 +623,6 @@ function displace_command(command, amt) {
             new_command.brx += amt[0];
             new_command.bry += amt[1];
             break;
-        case "drawEllipse2":
-            new_command = new_command;
-            new_command.posx += amt[0];
-            new_command.posy += amt[1];
-            break;
         case "drawEllipseCR":
             new_command = new_command;
             new_command.cx += amt[0];
@@ -657,7 +668,6 @@ function scale_command(command, center, x_amt, y_amt) {
         case "drawRectangle2":
         case "drawEllipse":
         case "drawEllipseCR":
-        case "drawEllipse2":
         case "drawBezierCurve":
         case "drawBezierShape":
         case "drawRoundedRectangle":
@@ -698,7 +708,7 @@ function scale_command(command, center, x_amt, y_amt) {
             new_command.y = scale_number(new_command.y, center[1], y_amt);
             break;
         case "drawCircle": // converted into drawEllipse
-            var command_c = { type: "drawEllipseCR", cx: command.x, cy: command.y, rx: command.r, ry: command.r, color: command.color, transparency: command.transparency, start: command.start, end: command.end };
+            var command_c = { type: "drawEllipseCR", cx: command.x, cy: command.y, rx: command.r, ry: command.r, color: command.color, transparency: command.transparency, start: command.start, end: command.end, fill: command.fill, stroke_width: command.width, };
             return scale_command(command_c, center, x_amt, y_amt);
             break;
         case "drawEllipse": // all ellipses are converted into CR format 
@@ -706,12 +716,6 @@ function scale_command(command, center, x_amt, y_amt) {
             var ry = (command.bry - command.posy) / 2;
             var centerE = [command.posx + rx, command.posy + ry];
             return scale_command({ type: "drawEllipseCR", cx: centerE[0], cy: centerE[1], rx: rx, ry: ry, color: command.color, transparency: command.transparency, rotate: command.rotate, start: command.start, end: command.end }, center, x_amt, y_amt); // check the last 3 
-            break;
-        case "drawEllipse2":
-            var rx = command.width / 2;
-            var ry = command.height / 2;
-            var centerE = [command.posx + rx, command.posy + ry];
-            return scale_command({ type: "drawEllipseCR", cx: centerE[0], cy: centerE[1], rx: rx, ry: ry, color: command.color, transparency: command.transparency, rotate: command.rotate, start: command.start, end: command.end }, center, x_amt, y_amt);
             break;
         case "drawEllipseCR":
             new_command = new_command;
@@ -763,7 +767,6 @@ function rotate_command(command, origin, amt) {
         case "drawRectangle2":
         case "drawEllipse":
         case "drawEllipseCR":
-        case "drawEllipse2":
         case "drawBezierCurve":
         case "drawBezierShape":
         case "drawRoundedRectangle":
@@ -803,12 +806,6 @@ function rotate_command(command, origin, amt) {
             var ry = (command.bry - command.posy) / 2;
             var center = [command.posx + rx, command.posy + ry];
             return rotate_command({ type: "drawEllipseCR", cx: center[0], cy: center[1], rx: rx, ry: ry, color: command.color, transparency: command.transparency, rotate: command.rotate, start: command.start, end: command.end }, origin, amt); // check the last 3 
-            break;
-        case "drawEllipse2":
-            var rx = command.width / 2;
-            var ry = command.height / 2;
-            var center = [command.posx + rx, command.posy + ry];
-            return rotate_command({ type: "drawEllipseCR", cx: center[0], cy: center[1], rx: rx, ry: ry, color: command.color, transparency: command.transparency, rotate: command.rotate, start: command.start, end: command.end }, origin, amt);
             break;
         case "drawEllipseCR":
             new_command = new_command;
@@ -915,12 +912,14 @@ function shift_lst(lst, n, way) {
             lst[n] = tmp2;
         }
     }
+    return lst;
 }
 // mutates
 function combine_obj(obj, obj2) {
     for (let item of Object.keys(obj2)) {
         obj[item] = obj2[item];
     }
+    return obj;
 }
 // these two are used when the values in the hash table are lists
 function add_obj(obj, k, v) {
@@ -928,12 +927,14 @@ function add_obj(obj, k, v) {
         obj[k] = [];
     }
     obj[k].push(v);
+    return obj;
 }
 function concat_obj(obj, k, v) {
     if (obj[k] == undefined) {
         obj[k] = [];
     }
     obj[k] = obj[k].concat(v);
+    return obj;
 }
 function noNaN(lst) {
     for (let f of lst) {
@@ -1458,7 +1459,26 @@ function move_wall(point, walls, target, amt, epsilon = 0.001) {
         target = moveTo(point, target, amt);
     }
     for (let w of walls) {
+        if (dist(point, target) < epsilon) {
+            break;
+        }
         if (doLinesIntersect(point, target, w)) {
+            let intersection = getIntersection(pointToCoefficients(point, target), pointToCoefficients(w));
+            // target = intersection + (start - intersection) normalized to 0.01
+            target = lincomb(1, intersection, 1, normalize(lincomb(1, point, -1, intersection), epsilon));
+        }
+    }
+    return target;
+}
+function move_wallWH(point, walls, target, amt, epsilon = 0.001) {
+    if (amt != undefined) {
+        target = moveTo(point, target, amt);
+    }
+    for (let w of walls) {
+        if (dist(point, target) < epsilon) {
+            break;
+        }
+        if (doLinesIntersect(point, target, [w[0], w[1], w[0] + w[2], w[1] + w[3]])) {
             let intersection = getIntersection(pointToCoefficients(point, target), pointToCoefficients(w));
             // target = intersection + (start - intersection) normalized to 0.01
             target = lincomb(1, intersection, 1, normalize(lincomb(1, point, -1, intersection), epsilon));
@@ -2199,6 +2219,38 @@ function output(d, ignore_exceptions = false) {
                         }
                     }
                     break;
+                case "ellipse":
+                    {
+                        if (shape.fill == undefined && shape.outline == undefined) {
+                            if (ignore_exceptions == true) {
+                                continue;
+                            }
+                            else {
+                                throw "fill and color are both undefined;";
+                            }
+                        }
+                        let pts = JSON.parse(JSON.stringify(points));
+                        if (pts.length < 3) {
+                            continue;
+                        }
+                        let cmd5 = d_ellipse2(pts[0], dist(pts[0], pts[1]), dist(pts[0], pts[2]));
+                        let diff = lincomb(1, pts[1], -1, pts[0]);
+                        let angle = Math.atan2(diff[1], diff[0]);
+                        cmd5.rotate = angle;
+                        if (shape.fill) {
+                            cmd5.fill = true;
+                            cmd5.color = point_fill_to_fill(shape.fill, d.points);
+                            result.push(cmd5);
+                        }
+                        ;
+                        if (shape.outline && shape.outline_visible) {
+                            cmd5.fill = false;
+                            cmd5.stroke_width = shape.outline.thickness;
+                            cmd5.color = shape.outline.color;
+                            result.push(cmd5);
+                        }
+                    }
+                    break;
                 case "smooth bezier shape":
                     // color, fill, type, width , points_x, points_y
                     if (shape.fill == undefined && shape.outline == undefined) {
@@ -2354,14 +2406,14 @@ function shape_exists(d, s) {
     return list_shapes(d)[s] != undefined;
 }
 function selected_shape_visible(d) {
-    if (display.selected_shape == undefined) {
+    if (d.selected_shape == undefined) {
         return false; // if the shape doesn't exist, it's not visible
     }
-    let shape = list_shapes(display)[display.selected_shape][0];
+    let shape = list_shapes(d)[d.selected_shape][0];
     if (!shape.visible) {
         return false;
     }
-    return display.layer_visibility[shape.parent_layer];
+    return d.layer_visibility[shape.parent_layer];
 }
 function get_closest_point(d, p, visible = true) {
     let check_points = undefined;
@@ -3069,9 +3121,12 @@ function keypress(point, key) {
         add_new_shape(display, display.selected_layer, "circle", point);
     }
     else if (key == "6") {
-        add_new_shape(display, display.selected_layer, "bezier shape", point);
+        add_new_shape(display, display.selected_layer, "ellipse", point);
     }
     else if (key == "7") {
+        add_new_shape(display, display.selected_layer, "bezier shape", point);
+    }
+    else if (key == "8") {
         add_new_shape(display, display.selected_layer, "smooth bezier shape", point);
     }
     else {
@@ -3093,10 +3148,10 @@ function scroll_wheel(point, up) {
 function move_points_in_shape(d, shape, amt) {
     let shape_obj = list_shapes(d)[shape][0];
     let to_move = get_points(shape_obj);
-    for (let [i, pt] of display.points.entries()) {
+    for (let [i, pt] of d.points.entries()) {
         if (to_move.has(pt[0])) {
-            display.points[i][1] += amt[0];
-            display.points[i][2] += amt[1];
+            d.points[i][1] += amt[0];
+            d.points[i][2] += amt[1];
         }
     }
 }
