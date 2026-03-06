@@ -28,6 +28,7 @@ class game implements game_interface{
             this.collected.push(false);
         }   
         this.circles = [];
+        this.t = 0;
     }  
     tick(){
         console.log(this.t)
