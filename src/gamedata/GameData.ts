@@ -21,10 +21,10 @@ import { fade_wrap } from "../process_draws";
 export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_type , events : any[] , canvas : string){
     let output : draw_command[] = []; 
     if(canvas == "fade"&& globalStore.fading){
-        return [[], true]
+        return [[], false]
     }
     else if(canvas == "main"){ 
-        //output.push(d_image("images/katy.webp", 0,0))
+        output.push(d_image("images/katy.webp", 0,0))
         // coins
         for(let [i, item] of g.coins.entries()){
             if(g.collected[i] == false){
