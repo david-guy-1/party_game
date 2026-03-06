@@ -3,6 +3,7 @@ import { d_image } from "../canvasDrawing";
 import { game_interface, point3d } from "../interfaces";
 import { lerp, moveTo, point_to_color } from "../lines";
 import game from "./game";
+import { globalStore_type } from "./globalStore";
 
 
 type point = [number, number]; 
@@ -59,6 +60,9 @@ class star implements animation<game> {
         }
         var d : drawPolygon_command = {type:"drawPolygon", "color":`rgba(${this.color[0]},${this.color[1]},${this.color[2]},${this.lifespan/this.init > 0.5 ? 1 : this.lifespan/this.init*2 })`, "fill":true, "points_x" : points.map((x) => x[0]), "points_y": points.map((x) => x[1])}
         return [d];
+    }
+    end(g : game, t  : globalStore_type){
+        console.log("OVER")
     }
 }
 

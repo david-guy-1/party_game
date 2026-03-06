@@ -204,4 +204,9 @@ note : for drawing stuff, transparency is 1 for opaque and 0 for transparent,
 
 ---
 
-tip : make a reset function that resets the game and globalStore, and put it in the init functions 
+tips : make a reset function that resets the game and globalStore, and put it in the init functions . 
+
+use flags extensively - is an animation playing? is it fading? 
+
+put a "props to run" in globalStore, and append to the output of prop_commands (and clear the globalstore) it every time prop_commands is called, so other commands can call prop functions 
+

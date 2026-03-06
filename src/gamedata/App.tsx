@@ -57,7 +57,8 @@ function App() {
             "image" : [],
             "text":[] 
         },
-        fading : false
+        fading : false,
+        props_to_run : []
       }
       return <><GameDisplay data={data} globalStore={store}  FPS={60} /> <Sound_el x={0} y={0}/></>
     } else {
@@ -81,7 +82,8 @@ function App() {
               "image" : [],
               "text":[] 
           },
-          fading : false
+          fading : false,
+          props_to_run : []
       }
       return <><GameDisplay data={data} globalStore={store}  FPS={60} /> <Sound_el x={0} y={0}/></>
     }

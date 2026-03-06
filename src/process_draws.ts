@@ -8,8 +8,7 @@ export function draw(lst : draw_command[], c: React.RefObject<HTMLCanvasElement>
     draw_wrap(lst, c.current.getContext('2d')!);
 }
 export function clear(c: CanvasRenderingContext2D ){
-    //@ts-ignore
-    c.clearRect(0, 0, c.current?.width, c.current?.height);
+    c.clearRect(0, 0, c.canvas.width, c.canvas.height);
 }
 export function draw_wrap(lst : draw_command[], c: CanvasRenderingContext2D){
     for (let item of lst){

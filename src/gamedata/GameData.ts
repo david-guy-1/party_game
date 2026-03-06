@@ -24,7 +24,7 @@ export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_
         return [[], true]
     }
     else if(canvas == "main"){ 
-        output.push(d_image("images/katy.webp", 0,0))
+        //output.push(d_image("images/katy.webp", 0,0))
         // coins
         for(let [i, item] of g.coins.entries()){
             if(g.collected[i] == false){
@@ -57,12 +57,13 @@ export let sound_fn : sound_fn_type = function(g : game, globalStore : globalSto
 }
 
 export let prop_commands : prop_commands_type = function(g : game,globalStore : globalStore_type, events : any[]){
-    let output : props_to_run = []; 
+    let output : props_to_run = ([] as props_to_run).concat(globalStore.props_to_run); 
+    
     if(_.every(g.collected, x => x == true)){
         output.push(["switch", 0])
     }
             
-
+    globalStore.props_to_run = [];
     return output; 
 }
 
