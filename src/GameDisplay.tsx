@@ -60,6 +60,7 @@ function GameDisplay( props : {data  : gamedata, globalStore : globalStore_type,
         if(s == "reset"){
             anim_lst = [];
             reset();
+            init(g, globalStore);
             refresh(!r);
         }
         if(prop_fns[s] != undefined){
@@ -137,7 +138,7 @@ function GameDisplay( props : {data  : gamedata, globalStore : globalStore_type,
             clearInterval(interval); 
             interval = -1;
         }
-    },[g,r,props])
+    },[g,props])
 
     const button_click_disp = function(s : string){
         let lst  = button_click(g, globalStore, s);

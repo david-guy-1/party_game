@@ -69,7 +69,7 @@ Prop functions are functions that App.tsx adds to gameData that can be called wh
 
 Each element in the list returned by prop_commands is a pair (name : string, arg : any). If a function with that name exists, it's called with the second element in the pair as its last argument. 
 
-There are special cases : if the first element is "rerender" , the GameDisplay object is re-rendered (which calls init) , if it's "reset", reset_fn() (from gamedata) is called, then init is called, and the game is re-rendered
+There are special cases : if the first element is "rerender" , the GameDisplay object is re-rendered (which does NOT call init) , if it's "reset", reset_fn() (from gamedata) is called, then init is called, and the game is re-rendered
 
 Thus, an easy way to change the display is to first  change globalStore.display_type, then call rerender. 
 
