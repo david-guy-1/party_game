@@ -303,7 +303,7 @@ export function d_circle(...args : (number | number[])[] ) : drawCircle_command{
 	}
 	return {"type":"drawCircle", "x" : x[0], "y" : x[1], "r" : x[2]}
 } 
-
+// always top left
 export function d_image(name : string , ...args : ( number | number[])[] ) : drawImage_command{
 	let x = flatten_all(args) as number[] ;
 	if(x.length != 2){

@@ -20,8 +20,9 @@ export let display : display_type = {
 
 export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_type , events : any[] , canvas : string){
     let output : draw_command[] = []; 
-    
-    output.push(d_image("vite.svg", g.player)); 
+    if(canvas == "main"){
+        output.push(d_image("vite.svg", g.player)); 
+    }
     return [output,true];
 }
 
@@ -31,7 +32,7 @@ export let anim_fn : anim_fn_type = function(g: game, globalStore: globalStore_t
 }
 
 export let sound_fn : sound_fn_type = function(g : game, globalStore : globalStore_type ,events : any[]){
-    return [undefined,[]]
+    return ["no change",[]]
 }
 
 export let prop_commands : prop_commands_type = function(g : game,globalStore : globalStore_type, events : any[]){

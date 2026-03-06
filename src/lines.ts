@@ -53,7 +53,7 @@ export function move_lst<T>(a : T[] , b : T[]) : T[]{
 }
 
 // finds b in a, then inserts c after it.
-function insert_after<T>(a : T[], b : T, c : T) : T[]{
+export function insert_after<T>(a : T[], b : T, c : T) : T[]{
 	for(let i=0;  i< a.length ; i++){
 		if(a[i] == b){
 			a.splice(i+1, 0, c); 

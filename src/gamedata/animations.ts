@@ -4,48 +4,62 @@ import { game_interface, point3d } from "../interfaces";
 import { lerp, moveTo, point_to_color } from "../lines";
 import game from "./game";
 
-export class explode_anim implements animation<game>{
+
+type point = [number, number]; 
+
+class star implements animation<game> {
+    r1:number;
+    r2:number;
     x:number;
     y:number;
-    cx : number;
-    cy : number;
-    lifespan = 30;
-    canvas : string = "anim_frame";
-    constructor(x : number,y : number){
-        this.x=x+(Math.random()  - 0.5);
-        this.y=y+(Math.random()  - 0.5);
-        this.cx = x;
-        this.cy = y; 
-    }
-    draw(g : game_interface, globalStore : globalStore_type) : draw_command[] {
-        let color : point3d = lerp([255,0,0], [255,255,255], this.lifespan/30) as point3d;
-        return [{type:"drawCircle", x:this.x, y:this.y, r:3,"fill":true,color:point_to_color(color)}]; 
-    }
-    update(g : game_interface, globalStore : globalStore_type){
-        [this.x,this.y] = moveTo([this.x,this.y],[this.cx, this.cy],-5)
-        this.lifespan--;
-        return this.lifespan <= 0;
-    }
-}
+    dx:number;
+    dy:number;
+    angle:number;
+    spinspeed:number; 
+    color:[number,number,number];
+    lifespan:number;
+    init : number;
+    canvas : string = "main"; 
 
-
-export class coin_anim implements animation<game>{
-    x:number;
-    y:number;
-    frame:number;
-    id : number;
-    canvas: string = "anim_frame";
-    constructor(x : number,y : number,frame : number,id:number){
+    constructor(r1 : number,r2 : number,x : number,y : number,dx : number,dy : number,angle : number,spinspeed:number, color : [number,number,number],lifespan : number){
+        this.r1=r1;
+        this.r2=r2;
         this.x=x;
         this.y=y;
-        this.frame=frame;
-        this.id = id;
+        this.dx=dx;
+        this.dy=dy;
+        this.angle=angle;
+        this.spinspeed = spinspeed
+        this.color=color;
+        this.lifespan=lifespan;
+        this.init=lifespan;
     }
-    draw(g : game, globalStore : globalStore_type){
-        return [d_image(`images/coin${this.frame%3 + 1}.png`,this.x-10, this.y-10)];
+    update(){
+        this.x += this.dx;
+        this.y += this.dy;
+        this.angle += this.spinspeed; 
+        this.lifespan -= 1;
+        return this.lifespan <= 0;
     }
-    update(g: game, globalStore: globalStore_type){
-        this.frame++; 
-        return g.collected[this.id];
+    draw(){ 
+        var r1 = this.r1;
+        var r2 = this.r2;
+        var angle = this.angle; 
+        var x = this.x;
+        var y = this.y; 
+        var interval = 2*Math.PI / 5;
+        var points :point[]= []
+        for(var i=0; i<10; i++){
+            var t = interval * i/2 + angle
+            if(i%2 == 0){
+                points.push([Math.cos(t)*r2+x, Math.sin(t)*r2+y])
+            } else { 
+                points.push([Math.cos(t)*r1+x, Math.sin(t)*r1+y])
+            }
+        }
+        var d : drawPolygon_command = {type:"drawPolygon", "color":`rgba(${this.color[0]},${this.color[1]},${this.color[2]},${this.lifespan/this.init > 0.5 ? 1 : this.lifespan/this.init*2 })`, "fill":true, "points_x" : points.map((x) => x[0]), "points_y": points.map((x) => x[1])}
+        return [d];
     }
 }
+
+export default star; 

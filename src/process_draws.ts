@@ -1,4 +1,5 @@
 import { drawImage, drawLine, drawCircle, drawPolygon, drawRectangle, drawRectangle2, drawText, drawEllipse, drawEllipseCR, drawEllipse2, drawBezierCurve, drawBezierShape, drawRoundedRectangle } from "./canvasDrawing";
+import { point } from "./interfaces";
 
 export function draw(lst : draw_command[], c: React.RefObject<HTMLCanvasElement>){
     if(c.current == null){
@@ -6,12 +7,9 @@ export function draw(lst : draw_command[], c: React.RefObject<HTMLCanvasElement>
     }
     draw_wrap(lst, c.current.getContext('2d')!);
 }
-export function clear(c: React.RefObject<HTMLCanvasElement>){
-    if(c.current == null){
-        return;
-    }
+export function clear(c: CanvasRenderingContext2D ){
     //@ts-ignore
-    c.current.getContext('2d').clearRect(0, 0, c.current?.width, c.current?.height);
+    c.clearRect(0, 0, c.current?.width, c.current?.height);
 }
 export function draw_wrap(lst : draw_command[], c: CanvasRenderingContext2D){
     for (let item of lst){
@@ -57,15 +55,15 @@ export function draw_wrap(lst : draw_command[], c: CanvasRenderingContext2D){
     }
 }
 
-export function fade(lst : draw_command[], c : React.RefObject<HTMLCanvasElement>,  callback : () => void, color : string = "black", time : number = 0.5, size : point = [1000, 1000]){
+export function fade(lst : draw_command[], c : React.RefObject<HTMLCanvasElement>,  callback ?: (a : any) => void, args : any = undefined, color : string = "black", time : number = 0.5, size : point = [1000, 1000]){
     if(c.current == null){
         return;
     }
 
-    fade_wrap(lst, c.current.getContext('2d')!, callback, color, time, size);
+    fade_wrap(lst, c.current.getContext('2d')!, callback, args, color, time, size);
 }
 
-export function fade_wrap(lst : draw_command[], c : CanvasRenderingContext2D,  callback : () => void, color : string = "black", time : number = 0.5, size : point = [1000, 1000]){
+export function fade_wrap(lst : draw_command[], c : CanvasRenderingContext2D,  callback ?: (a : any) => void, args  : any = undefined, color : string = "black", time : number = 0.5, size : point = [1000, 1000]){
     // draw black 20 times, then draw the thing 20 times; 
     let interval = setInterval(function(this : [number]){
         this[0]++;
@@ -89,7 +87,9 @@ export function fade_wrap(lst : draw_command[], c : CanvasRenderingContext2D,  c
         } else {
             c.clearRect(0,0,size[0] , size[1])
             draw_wrap(lst, c);
-            callback();
+            if(callback != undefined) { 
+                callback(args);
+            }
         }
             
     }.bind([0]), time * 1000 / 40)

@@ -35,13 +35,21 @@ export function setMuted(x : boolean){
 }
 
 export function changeSound(s : string | undefined){
+    if(s == getCurrentTrack()){
+        return ; 
+    }
+    // stop  the current sound
     sound_obj.pause(); 
-    if(s != undefined){
+
+    // and create a new sound 
+    if(s != undefined){ // create a new sound obj
         sound_obj = new Audio(s);
         sound_obj.loop = true;
         if(!muted){
             sound_obj.play();
         }
+    } else { 
+        sound_obj = new Audio(undefined); ;
     }
     playing = s;
 }

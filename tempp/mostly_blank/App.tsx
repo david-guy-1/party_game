@@ -30,7 +30,7 @@ function App() {
     let store : globalStore_type = {
     }
 
-    return <GameDisplay data={data} globalStore={store} />
+    return <GameDisplay data={data} globalStore={store}  FPS={60}/>
   }
 }
 
