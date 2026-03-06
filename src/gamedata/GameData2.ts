@@ -17,24 +17,29 @@ import { changeSound } from "../Sound";
 
 export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_type , events : any[] , canvas : string){
     let output : draw_command[] = []; 
-    output.push(d_image("images/sahher.jpg", 0,0))
-    // circles
-    for(let item of g.circles){
-        let circ = d_circle(item[0], CIRCLE_RADIUS);
-        circ.fill = true;
-        if(g.t < item[1] + CIRCLE_ACTIVATE){
-            // inactive circle
-            circ.color = "blue"
-            output.push(circ)
-        } else if(g.t < item[1] + CIRCLE_LIFESPAN){
-            circ.color = "red"
-            output.push(circ)
-        }
+    if(canvas == "fade" && globalStore.fading){
+        return [[], false]
     }
-    // duration 
-    output.push(combine_obj( d_rect2(0, 0, GAME_DURATION/2, 10), {color:point_to_color([0, 0, 0]), fill:true}) as draw_command); 
-    output.push(combine_obj( d_rect2(0, 0, g.t/2, 10), {color:point_to_color([255- rescale(0, GAME_DURATION, 0, 255, g.t) , 255, rescale(0, GAME_DURATION, 0, 255, g.t) ]), fill:true}) as draw_command);
-    output.push(d_image("images/player.png", g.player)); 
+    else if(canvas == "main"){     
+        output.push(d_image("images/sahher.jpg", 0,0))
+        // circles
+        for(let item of g.circles){
+            let circ = d_circle(item[0], CIRCLE_RADIUS);
+            circ.fill = true;
+            if(g.t < item[1] + CIRCLE_ACTIVATE){
+                // inactive circle
+                circ.color = "blue"
+                output.push(circ)
+            } else if(g.t < item[1] + CIRCLE_LIFESPAN){
+                circ.color = "red"
+                output.push(circ)
+            }
+        }
+        // duration 
+        output.push(combine_obj( d_rect2(0, 0, GAME_DURATION/2, 10), {color:point_to_color([0, 0, 0]), fill:true}) as draw_command); 
+        output.push(combine_obj( d_rect2(0, 0, g.t/2, 10), {color:point_to_color([255- rescale(0, GAME_DURATION, 0, 255, g.t) , 255, rescale(0, GAME_DURATION, 0, 255, g.t) ]), fill:true}) as draw_command);
+        output.push(d_image("images/player.png", g.player)); 
+    }
     return [output,true];
 }
 
@@ -68,6 +73,7 @@ export let reset_fn : reset_fn_type = function() {
 }
 export let init : init_type = function(g : game, globalStore : globalStore_type){
     changeSound("Frost-Waltz.mp3");
+    g.reset();
     return ;
 }
 

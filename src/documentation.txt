@@ -61,6 +61,8 @@ When a button is clicked, button_click(game, globalStore, name of button) is cal
 
 display type has the following , it's in interfaces.d.ts and the comments tell you what they mean. When GameDisplay is rendered, it reads globalStore.display and uses that. This means that to update it when it changes, you must re-render. See prop functions for how to do so. 
 
+The "refs" contain a ref to the currently displayed canvas elements, so the functions in App or GameData can call functions that require canvas elements. 
+
 ----
 
 Prop functions are functions that App.tsx adds to gameData that can be called when things happen in the game. They're stored in a key-value pair in gameData. The key is a string (its name) and the value is a function, which takes as args (game, globalStore, arg) (see below for what the last arg is). Every render frame, prop_commands(g, globalStore, events) is called, which returns a list of props functions that should be called, and arguments to call them with. 
@@ -118,7 +120,9 @@ then, call its "output" method with an x and y, it returns a drawImage_command. 
 
 ----
 
-fade (defined in process_draws.ts) takes a list of draw commands, a canvas, and optionally a callback, arg to that allback color, time ,and size, and draws a translucent rectangle of that color on the canvas repeatedly until half the time has passed, then clears the canvas, draws the list of draw commands, and then draws a (ever more transparent) translucent rectangle. Finally, it calls the callback function with the specified args args. 
+fade (defined in process_draws.ts) takes a list of draw commands, a canvas, and optionally a callback, arg to that callback , time (seconds),size,  and full (boolean). and draws a translucent rectangle of that color on the canvas repeatedly until half the time has passed, then clears the canvas, draws the list of draw commands, and then draws a (ever more transparent) translucent rectangle. Finally, it calls the callback function with the specified args args. 
+
+If full is false, then it just draws the rectangle, but fade out is instant. In this case, the time taken is half of the specified time.
 
 ---
 
@@ -197,3 +201,7 @@ corners(tlx : number, tly : number, width : number, height : number, angle : num
 utilities contains a points drawing app, pojo typescript (automatically makes class with ctor), and image processing (opencv, applyMatrix applies a 3x3 or 4x4 matrix to every pixel of the image, note that it's in BGR and not RGB)
 
 note : for drawing stuff, transparency is 1 for opaque and 0 for transparent,
+
+---
+
+tip : make a reset function that resets the game and globalStore, and put it in the init functions 

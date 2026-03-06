@@ -55,16 +55,17 @@ export function draw_wrap(lst : draw_command[], c: CanvasRenderingContext2D){
     }
 }
 
-export function fade(lst : draw_command[], c : React.RefObject<HTMLCanvasElement>,  callback ?: (a : any) => void, args : any = undefined, color : string = "black", time : number = 0.5, size : point = [1000, 1000]){
+export function fade(lst : draw_command[], c : React.RefObject<HTMLCanvasElement>,  callback ?: (a : any) => void, args : any = undefined, color : string = "black", time : number = 0.5, size : point = [1000, 1000], full : boolean = true){
     if(c.current == null){
         return;
     }
 
-    fade_wrap(lst, c.current.getContext('2d')!, callback, args, color, time, size);
+    fade_wrap(lst, c.current.getContext('2d')!, callback, args, color, time, size, full);
 }
 
-export function fade_wrap(lst : draw_command[], c : CanvasRenderingContext2D,  callback ?: (a : any) => void, args  : any = undefined, color : string = "black", time : number = 0.5, size : point = [1000, 1000]){
+export function fade_wrap(lst : draw_command[], c : CanvasRenderingContext2D,  callback ?: (a : any) => void, args  : any = undefined, color : string = "black", time : number = 0.5, size : point = [1000, 1000], full : boolean = true){
     // draw black 20 times, then draw the thing 20 times; 
+    // time is in seconds
     let interval = setInterval(function(this : [number]){
         this[0]++;
         if(this[0] == 40){
@@ -76,7 +77,7 @@ export function fade_wrap(lst : draw_command[], c : CanvasRenderingContext2D,  c
             c.rect(0, 0, size[0], size[1]);
             c.fillStyle = color;
             c.fill();
-        } else if(this[0] <= 39){
+        } else if(this[0] <= 39 && full == true){
             c.clearRect(0,0,size[0] , size[1])
             draw_wrap(lst, c);
             c.globalAlpha = 1 - 0.05*(this[0] - 20);

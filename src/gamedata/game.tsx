@@ -23,13 +23,14 @@ class game implements game_interface{
     reset(){
         this.coins = []
         this.collected = [];
-        for(let i=0; i < 10; i++){
+        for(let i=0; i < 1; i++){
             this.coins.push([randint(0, 600, "a" + i + Date.now()), randint(0, 600, "b" + i + Date.now())]);
             this.collected.push(false);
         }   
         this.circles = [];
     }  
     tick(){
+        console.log(this.t)
         let evts : events_type = []; 
         this.player = moveTo(this.player, this.target, 10) as point;
         if(this.coin_mode){

@@ -12,6 +12,7 @@ type rect = [number, number, number, number]; //all rects are width/height (not 
 // the Record<string, any>? at the end of all these are extra styles
 
 type display_type = {
+    refs ?: React.MutableRefObject<Record<string, HTMLCanvasElement>> 
     "canvas" : [string, rect, Record<string, any>?][] // width/height
     "button" : [string, rect, string, string?, Record<string, any>?][] //name, rect (wh), third arg is text to display, fourth is image on button
     "image" : [string, boolean , number, number,number?,number?, Record<string, any>?][] // string - image path, boolean - true = div, false = img element;  x,y,w,h : images are displayed under all buttons and canvases  - w and h must be there if img is a div. to display an image on a canvas use drawImage. 

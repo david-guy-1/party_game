@@ -50,7 +50,7 @@ function GameDisplay( props : {data  : gamedata, globalStore : globalStore_type,
     console.log("refreshed");
     const [r, refresh] = useState<boolean>(false);
     const refs = useRef<Record<string, HTMLCanvasElement>>({});
-
+    globalStore.display.refs = refs; 
 
     let anim_lst : animation<typeof g>[] = []; 
     function handle_prop(s : string, t : any){

@@ -13,21 +13,27 @@ import { lincomb, point_to_color, unit_vector } from "../lines";
 import star from "./animations";
 import { globalStore_type } from "./globalStore";
 import { changeSound } from "../Sound";
+import { fade_wrap } from "../process_draws";
 
 
 
 
 export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_type , events : any[] , canvas : string){
     let output : draw_command[] = []; 
-
-    output.push(d_image("images/katy.webp", 0,0))
-    // coins
-    for(let [i, item] of g.coins.entries()){
-        if(g.collected[i] == false){
-            output.push(d_image("images/coin1.png", item))
-        }
+    if(canvas == "fade"&& globalStore.fading){
+        return [[], true]
     }
-    output.push(d_image("images/player.png", g.player)); 
+    else if(canvas == "main"){ 
+        output.push(d_image("images/katy.webp", 0,0))
+        // coins
+        for(let [i, item] of g.coins.entries()){
+            if(g.collected[i] == false){
+                output.push(d_image("images/coin1.png", item))
+            }
+        }
+        output.push(d_image("images/player.png", g.player)); 
+        return [output,true];
+    }
     return [output,true];
 }
 
@@ -55,6 +61,8 @@ export let prop_commands : prop_commands_type = function(g : game,globalStore : 
     if(_.every(g.collected, x => x == true)){
         output.push(["switch", 0])
     }
+            
+
     return output; 
 }
 
@@ -67,6 +75,7 @@ export let reset_fn : reset_fn_type = function() {
 }
 export let init : init_type = function(g : game, globalStore : globalStore_type){
     changeSound("song.mp3");
+    g.reset();
     return ;
 }
 
