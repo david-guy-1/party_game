@@ -212,3 +212,4 @@ put a "props to run" in globalStore, and append to the output of prop_commands (
 
 put a blank "fade" layer at the top , and don't clear it when draw_fn is called. This is because draw_fn will draw on other layers and clear the fading. 
 
+draw_fn : MUST check the layer carefully, don't draw the same thing on multiple layers. 
