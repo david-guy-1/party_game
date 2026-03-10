@@ -1,93 +1,62 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import game from './game';
 
-import { globalStore_type } from "./globalStore";
-import { anim_fn, button_click, draw_fn, data_obj, init, prop_commands, reset_fn, sound_fn } from './GameData';
-import { data_obj as data_obj_2 } from './GameData2';
-import { events, set_events } from '../EventManager';
+import { anim_fn, button_click, draw_fn, data_obj, init, prop_commands, reset_fn, sound_fn } from './GameData_deco';
+import { events } from '../EventManager';
 import GameDisplay, { clone_gamedata } from '../GameDisplay';
 import { gamedata } from '../interfaces';
 import { all_combos } from '../lines';
-import Sound_el from './Sound';
-import { fade_wrap } from '../process_draws';
-
+import { globalStore_type } from './globalStore';
 
 function move_canvas(e : MouseEvent, g:game){
-    if((e.target as HTMLElement).getAttribute("data-key") == "fade"){ // topmost canvas element that is valid - prevent moving char when mouse goes over another element 
+    if((e.target as HTMLElement).getAttribute("data-key") == "anim_frame"){ // topmost canvas element that is valid - prevent moving char when mouse goes over another element 
         g.target= [e.offsetX, e.offsetY]
     }
 }
 
+export const WIDTH=1000;
+export const HEIGHT=700;
 
+const intros = ["Hello, my name is Amy.", 
+  "My birthday is in a few days",
+  "I need to prepare everything to have the best party ever!",
+  "First things first, I need to prepare decorations",
+  "Let's see what I have...",
+  "A banner, ribbons, balloons, and flowers. I can use these",
+  "Now, how do I make these look nice..."
+]
 function App() {
-
   const [g, setG] = useState<game | undefined>(undefined);
-  const [coins, setCoins] = useState<boolean>(true);
-  useEffect(function(){
-    // componentDidMount
-    setTimeout(() =>     setG(new game()), 1000)
-
-  }, [])
-  
-
+  const [intro, setIntro] = useState(0); 
   if(g == undefined){
-    
-    return "loading"
+    setG(new game())
   } else {
-    if(coins){
+    // INTRO 
+    if(intro < intros.length){
+      return <><img src={intro < 5 ? "intro.png" : "introbox.png" } className="topleft"/> <div className="text">{intros[intro]} </div>  <div className='nextButton'>{intro != 0 ? <button  onClick={() => setIntro(x => x-1)}>Prev</button> : "-------"} <button  onClick={() => setIntro(x => x+1)}>Next</button></div></>
+    } else {
       // get gameData
       let data = clone_gamedata(data_obj); 
       data.g = g;
-      g.coin_mode = true;
-      data.prop_fns["switch"] =    function(game : game, globalStore : globalStore_type){
-        let c = globalStore.display.refs?.current?.["fade"]?.getContext("2d")
-        if(c && globalStore.fading == false){
-            globalStore.fading = true;
-            fade_wrap([], c, () => {globalStore.fading = false; setCoins(false)}, [], "black", 1, [1000,1000], false); // fade away
-        }
-      };
       
-      //function(){setCoins(false)};
+      data.prop_fns["new_game"] =  function(){setG(undefined)};
       // register event listener;
       events["mousemove a"] = [move_canvas, g]
       let store : globalStore_type = {
-        display :  {
+        display : {
             "button" : [],
-            "canvas" : [["main",[0,0,600,600]],["fade",[0,0,600,600]]],
+            "canvas" : [["main",[0,0,WIDTH,HEIGHT]], ["anim_frame",[0,0,WIDTH,HEIGHT]]],
             "image" : [],
             "text":[] 
         },
-        fading : false,
         props_to_run : []
+
       }
-      return <><GameDisplay data={data} globalStore={store}  FPS={60} /> <Sound_el x={0} y={0}/></>
-    } else {
-      // get gameData
-      let data = clone_gamedata(data_obj_2); 
-      data.g = g;
-      g.coin_mode = false;
-      data.prop_fns["switch"] =  function(game : game, globalStore : globalStore_type){
-        let c = globalStore.display.refs?.current?.["fade"]?.getContext("2d")
-        if(c && globalStore.fading == false){
-            globalStore.fading = true;
-            fade_wrap([], c, () => {globalStore.fading = false; setCoins(true)}, [], "black", 1, [1000,1000], false); // fade away
-        }
-      };
-      // register event listener;
-      events["mousemove a"] = [move_canvas, g]
-      let store : globalStore_type = {
-         display : {
-              "button" : [["b1", [0, 600, 100, 650] , "Do something"]],
-              "canvas" : [["anim_frame",[0,0,600,600]], ["main",[0,0,600,600]],["fade",[0,0,600,600]]],
-              "image" : [],
-              "text":[] 
-          },
-          fading : false,
-          props_to_run : []
-      }
-      return <><GameDisplay data={data} globalStore={store}  FPS={60} /> <Sound_el x={0} y={0}/></>
+      g.mode = "decorations"
+      return <GameDisplay data={data} globalStore={store}  FPS={60}/>
+
     }
-  } 
+  }
 }
 
 export default App

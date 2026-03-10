@@ -5,6 +5,27 @@
 
 }
 
+.topLeft {
+  position: absolute;
+  top:0px;
+  left:0px;
+
+}
+
+.text {
+  position: absolute;
+  top:20px;
+  left:100px;
+
+}
+
+.nextButton {
+  position: absolute;
+  top:20px;
+  left:700px;
+
+}
+
 .bottomButtons {
     position: absolute;
     top:650px;
