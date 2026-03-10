@@ -5,14 +5,31 @@ import { anim_fn, button_click, draw_fn, data_obj, init, prop_commands, reset_fn
 import { events } from '../EventManager';
 import GameDisplay, { clone_gamedata } from '../GameDisplay';
 import { gamedata } from '../interfaces';
-import { all_combos } from '../lines';
+import { all_combos, dist } from '../lines';
 import { globalStore_type } from './globalStore';
 
-function move_canvas(e : MouseEvent, g:game){
-    if((e.target as HTMLElement).getAttribute("data-key") == "anim_frame"){ // topmost canvas element that is valid - prevent moving char when mouse goes over another element 
-        g.target= [e.offsetX, e.offsetY]
-    }
+function move_canvas(e : MouseEvent, g:game, s : globalStore_type){
+  s.mouse = [e.offsetX, e.offsetY];
 }
+
+function dec_down(e : MouseEvent, g:game, s : globalStore_type){
+  s.mousedown = true; 
+  for(let [ i,balloon] of g.balloons.entries()){
+    if(dist([e.offsetX, e.offsetY] , balloon) < 30){
+      s.clicked_balloon = i;
+      break;
+    }
+  }
+}
+
+function dec_up(e : MouseEvent, g:game, s : globalStore_type){
+  s.mousedown = false;
+  if(s.clicked_balloon != undefined){
+    g.balloons[s.clicked_balloon] = s.mouse;
+  }
+  s.clicked_balloon = undefined 
+}
+
 
 export const WIDTH=1000;
 export const HEIGHT=700;
@@ -34,7 +51,7 @@ function App() {
     // INTRO 
     if(intro < intros.length){
       return <><img src={intro < 5 ? "intro.png" : "introbox.png" } className="topleft"/> <div className="text">{intros[intro]} </div>  <div className='nextButton'>{intro != 0 ? <button  onClick={() => setIntro(x => x-1)}>Prev</button> : "-------"} <button  onClick={() => setIntro(x => x+1)}>Next</button></div></>
-    } else {
+    } else { // start decorations
       // get gameData
       let data = clone_gamedata(data_obj); 
       data.g = g;
@@ -42,6 +59,8 @@ function App() {
       data.prop_fns["new_game"] =  function(){setG(undefined)};
       // register event listener;
       events["mousemove a"] = [move_canvas, g]
+      events["mousedown a"] = [dec_down, g]
+      events["mouseup a"] = [dec_up, g]
       let store : globalStore_type = {
         display : {
             "button" : [],
@@ -49,7 +68,9 @@ function App() {
             "image" : [],
             "text":[] 
         },
-        props_to_run : []
+        props_to_run : [],
+        mouse :[0,0],
+        mousedown : false
 
       }
       g.mode = "decorations"
