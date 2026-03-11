@@ -4,8 +4,8 @@ import { dist, moveTo } from "../lines";
 import { HEIGHT, WIDTH } from "./App";
 import { choice } from "../random";
 
-export type food_items = "Plain Cookies" | "Chocolate Chip Cookies"
-const food_items : food_items[] = ["Plain Cookies" , "Chocolate Chip Cookies"]
+export type food_items = "Plain Cookies" | "Chocolate Chip Cookies" | "Vanilla Ice Cream"
+const food_items : food_items[] = ["Plain Cookies" , "Chocolate Chip Cookies" , "Vanilla Ice Cream"]
 
 
 export type game_states = "decorations" | "shopping"
