@@ -12,5 +12,6 @@ export type globalStore_type = {
     clicked_ribbon ?: number
     clicked_flower ?: number
     party_mode : party_modes
+    shop_rerender : boolean
 }
 export type events_type = any;

@@ -55,13 +55,13 @@ function GameDisplay( props : {data  : gamedata, globalStore : globalStore_type,
     let anim_lst : animation<typeof g>[] = []; 
     function handle_prop(s : string, t : any){
         if(s == "rerender"){
-            refresh(!r);
+            refresh(r => !r);
         }            
         if(s == "reset"){
             anim_lst = [];
             reset();
             init(g, globalStore);
-            refresh(!r);
+            refresh(r => !r);
         }
         if(prop_fns[s] != undefined){
             prop_fns[s](g,globalStore, t)

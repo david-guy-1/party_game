@@ -5,7 +5,7 @@ import { HEIGHT, WIDTH } from "./App";
 import { choice } from "../random";
 
 export type food_items = "Plain Cookies" | "Chocolate Chip Cookies" | "Vanilla Ice Cream" | "BBQ Chips" | "Plain Instant Noodles" | "Beef Patties"
-const food_items : food_items[] = ["Plain Cookies" , "Chocolate Chip Cookies" , "Vanilla Ice Cream", "BBQ Chips","Plain Instant Noodles", "Beef Patties"]
+export const food_items : food_items[] = ["Plain Cookies" , "Chocolate Chip Cookies" , "Vanilla Ice Cream", "BBQ Chips","Plain Instant Noodles", "Beef Patties"]
 
 
 export type game_states = "decorations" | "shopping"
@@ -21,6 +21,14 @@ class game implements game_interface{
     t = 0; 
     shop_items : [food_items, number, number][] = []; //type, position (y), spawn time, 
     shop_last_spawn : number = -99999;
+    items_total : Record<food_items, number> = {
+        "Plain Cookies": 0,
+        "Chocolate Chip Cookies": 0,
+        "Vanilla Ice Cream": 0,
+        "BBQ Chips": 0,
+        "Plain Instant Noodles": 0,
+        "Beef Patties": 0
+    }; 
     constructor(){
         this.balloons = []
         this.balloon_colors = []
@@ -38,6 +46,9 @@ class game implements game_interface{
         for(let i=0; i<6; i++){
             this.flowers.push(132+140*i)
             this.flowers_colors.push("blue")
+        }
+        for(let item of food_items){
+            this.items_total[item ] = 0; 
         }
     }
     tick(){

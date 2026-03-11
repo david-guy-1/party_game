@@ -8,7 +8,7 @@ import { animation } from "../animations";
 import { d_image } from "../canvasDrawing";
 import GameDisplay from "../GameDisplay";
 import { anim_fn_type, button_click_type, display_type, draw_fn_type, gamedata, init_type, point, prop_commands_type, props_to_run, reset_fn_type, sound_fn_type } from "../interfaces";
-import game from "./game";
+import game, { food_items } from "./game";
 import { globalStore_type } from "./globalStore";
 import { shelves, shop_map, shopping_floor, wall_img } from "./full_draws";
 
@@ -61,6 +61,14 @@ export let sound_fn : sound_fn_type = function(g : game, globalStore : globalSto
 export let prop_commands : prop_commands_type = function(g : game,globalStore : globalStore_type, events : any[]){
     let output : props_to_run =  ([] as props_to_run).concat(globalStore.props_to_run); 
     globalStore.props_to_run = [];
+    if(globalStore.shop_rerender){
+        globalStore.display.text = []; 
+        for(let [i, item] of food_items.entries()){
+            globalStore.display.text.push([`${item} : ${g.items_total[item]}`, WIDTH, 30 + 30*i])
+        }
+        globalStore.shop_rerender = false;
+        return [["rerender", 0]]
+    }
     return output; 
 }
 

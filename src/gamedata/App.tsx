@@ -79,6 +79,8 @@ function dec_down(e : MouseEvent, g:game, s : globalStore_type){
       let coords = [WIDTH + 100 - time_diff *  SHOP_SCROLL_SPEED , 174 + 100 * height]; 
       if(dist(coords, [e.offsetX, e.offsetY] )< 50){
         g.shop_items.splice(i, 1);
+        g.items_total[item] ++; 
+        s.shop_rerender = true;
       } 
     }    
   }
@@ -176,6 +178,7 @@ function App() {
         mousedown : false,
         party_mode : "Move Balloons",
         banner_diff : 0,
+        shop_rerender : false,
 
       }
       g.mode = "decorations"
@@ -198,6 +201,7 @@ function App() {
         mousedown : false,
         party_mode : "Move Balloons",
         banner_diff : 0,
+        shop_rerender : false,
 
       }
 
