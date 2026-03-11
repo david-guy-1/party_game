@@ -7,7 +7,7 @@ import { choice } from "../random";
 class game implements game_interface{
     player : point = [400,400];
     target : point = [400,400];
-    banner_height : number = 400;
+    banner_height : number = 0;
     balloons : point[] = [];
     balloon_colors : string[] = [];
     ribbons : number[] = [];
@@ -26,12 +26,12 @@ class game implements game_interface{
             this.balloon_colors.push("red")
             
         }   
-        for(let i=0; i<6; i++){
-            this.ribbons.push(167+184*i)
+        for(let i=0; i<9; i++){
+            this.ribbons.push(167+84*i)
             this.ribbons_colors.push("blue")
         }
         for(let i=0; i<6; i++){
-            this.flowers.push(167+184*i)
+            this.flowers.push(132+140*i)
             this.flowers_colors.push("blue")
         }
     }

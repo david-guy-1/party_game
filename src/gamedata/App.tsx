@@ -63,7 +63,19 @@ function dec_down(e : MouseEvent, g:game, s : globalStore_type){
       }
     }   
   }
+
+  if(s.party_mode == "Move Banner"){
+    s.banner_diff = e.offsetY - g.banner_height;
+  }    
 }
+
+// given end mouse position we have : new height - old height = new y - old y 
+
+// banner_diff = old y - old height
+
+// compute new height given banner_diff, new y
+
+// new height  = new y - banner_diff
 
 function dec_up(e : MouseEvent, g:game, s : globalStore_type){
   s.mousedown = false;
@@ -81,11 +93,15 @@ function dec_up(e : MouseEvent, g:game, s : globalStore_type){
     s.clicked_ribbon = undefined 
   }
 
-    if(s.party_mode == "Move Flowers"){
+  if(s.party_mode == "Move Flowers"){
     if(s.clicked_flower != undefined){
       g.flowers[s.clicked_flower] = s.mouse[0];
     }
     s.clicked_flower = undefined 
+  }
+  if(s.party_mode == "Move Banner"){
+    g.banner_height = e.offsetY - s.banner_diff;
+    s.banner_diff = 0;
   }
 }
 
@@ -122,7 +138,7 @@ function App() {
       events["mouseup a"] = [dec_up, g]
       let store : globalStore_type = {
         display : {
-            "button" : [["change_mode|Move Balloons", [0, HEIGHT, 40, 40], ""],["change_mode|Color Balloons", [40, HEIGHT, 40, 40], ""],["change_mode|Move Ribbons", [80, HEIGHT, 40, 40], ""],["change_mode|Color Ribbons", [120, HEIGHT, 40, 40], ""],["change_mode|Move Flowers", [160, HEIGHT, 40, 40], ""],["change_mode|Color Flowers", [200, HEIGHT, 40, 40], ""]],
+            "button" : [["change_mode|Move Balloons", [0, HEIGHT, 40, 40], ""],["change_mode|Color Balloons", [40, HEIGHT, 40, 40], ""],["change_mode|Move Ribbons", [80, HEIGHT, 40, 40], ""],["change_mode|Color Ribbons", [120, HEIGHT, 40, 40], ""],["change_mode|Move Flowers", [160, HEIGHT, 40, 40], ""],["change_mode|Color Flowers", [200, HEIGHT, 40, 40], ""],["change_mode|Move Banner", [240, HEIGHT, 40, 40], ""]],
             "canvas" : [["main",[0,0,WIDTH,HEIGHT]], ["anim_frame",[0,0,WIDTH,HEIGHT]]],
             "image" : [],
             "text":[["Current Mode : Move Balloons", WIDTH-300, HEIGHT+10]] 
@@ -130,7 +146,8 @@ function App() {
         props_to_run : [],
         mouse :[0,0],
         mousedown : false,
-        party_mode : "Move Balloons"
+        party_mode : "Move Balloons",
+        banner_diff : 0
 
       }
       g.mode = "decorations"

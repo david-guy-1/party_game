@@ -6,6 +6,7 @@ export type globalStore_type = {
     props_to_run : props_to_run
     display : display_type
     mouse : point
+    banner_diff : number
     mousedown : boolean
     clicked_balloon ?: number 
     clicked_ribbon ?: number
