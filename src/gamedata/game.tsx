@@ -4,6 +4,11 @@ import { dist, moveTo } from "../lines";
 import { HEIGHT, WIDTH } from "./App";
 import { choice } from "../random";
 
+export type food_items = "Plain Cookies" | "Chocolate Chip Cookies"
+const food_items : food_items[] = ["Plain Cookies" , "Chocolate Chip Cookies"]
+
+
+export type game_states = "decorations" | "shopping"
 class game implements game_interface{
     banner_height : number = 0;
     balloons : point[] = [];
@@ -12,14 +17,15 @@ class game implements game_interface{
     ribbons_colors : string[] = [];
     flowers : number[] = [];
     flowers_colors : string[] = []; 
-    mode : string = "" // NOT party mode
+    mode : game_states = "decorations" // NOT party mode
     t = 0; 
+    shop_items : [food_items, number, number][] = []; //type, position (y), spawn time, 
+    shop_last_spawn : number = -99999;
     constructor(){
         this.balloons = []
         this.balloon_colors = []
         this.ribbons = []
         this.ribbons_colors = []
-        
         for(let i=0; i<10; i++){
             this.balloons.push([WIDTH/11 * (i+1), HEIGHT/11 * (i+1), ]);
             this.balloon_colors.push("red")
@@ -36,6 +42,13 @@ class game implements game_interface{
     }
     tick(){
         this.t++;
+        if(this.mode == "shopping"){
+            let time_since_last_spawn : number = this.t - this.shop_last_spawn
+            if((Math.random() < 0.01 &&  time_since_last_spawn > 60) || time_since_last_spawn > 300){
+                this.shop_items.push([choice(food_items, Math.random().toString()), Math.floor(Math.random()*4), this.t]); ;
+                this.shop_last_spawn = this.t
+            }
+        }
         return [];
     }
 }
