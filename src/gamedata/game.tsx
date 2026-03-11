@@ -5,8 +5,6 @@ import { HEIGHT, WIDTH } from "./App";
 import { choice } from "../random";
 
 class game implements game_interface{
-    player : point = [400,400];
-    target : point = [400,400];
     banner_height : number = 0;
     balloons : point[] = [];
     balloon_colors : string[] = [];
@@ -15,6 +13,7 @@ class game implements game_interface{
     flowers : number[] = [];
     flowers_colors : string[] = []; 
     mode : string = "" // NOT party mode
+    t = 0; 
     constructor(){
         this.balloons = []
         this.balloon_colors = []
@@ -36,8 +35,7 @@ class game implements game_interface{
         }
     }
     tick(){
-
-        this.player = moveTo(this.player, this.target, 10) as point;
+        this.t++;
         return [];
     }
 }

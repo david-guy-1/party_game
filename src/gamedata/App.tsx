@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import game from './game';
 
-import { anim_fn, button_click, draw_fn, data_obj, init, prop_commands, reset_fn, sound_fn } from './GameData_deco';
+import { data_obj as data_obj_deco } from './GameData_deco';
+
+import { data_obj as data_obj_shop } from './GameData_shop';
 import { events } from '../EventManager';
 import GameDisplay, { clone_gamedata } from '../GameDisplay';
 import { gamedata } from '../interfaces';
@@ -117,28 +119,37 @@ const intros = ["Hello, my name is Amy.",
   "A banner, ribbons, balloons, and flowers. I can use these",
   "Now, how do I make these look nice..."
 ]
+
+const firstInts = [
+  "Now that I finished decorating, I want to do crap",
+  "But what crap should I do?",
+  "I'll ask my friends.",
+]
+
 function App() {
   const [g, setG] = useState<game | undefined>(undefined);
   const [intro, setIntro] = useState(0); 
+  const [firstInt, setFirstInt] = useState(0);
   if(g == undefined){
     setG(new game())
   } else {
     // INTRO 
     if(intro < intros.length){
       return <><img src={intro < 5 ? "intro.png" : "introbox.png" } className="topleft"/> <div className="text">{intros[intro]} </div>  <div className='nextButton'>{intro != 0 ? <button  onClick={() => setIntro(x => x-1)}>Prev</button> : "-------"} <button  onClick={() => setIntro(x => x+1)}>Next</button></div></>
-    } else { // start decorations
+    } else if(intro == intros.length) { // start decorations
       // get gameData
-      let data = clone_gamedata(data_obj); 
+      let data = clone_gamedata(data_obj_deco); 
       data.g = g;
       
       data.prop_fns["new_game"] =  function(){setG(undefined)};
+      data.prop_fns["next"]= function(){ setIntro(x => x+1)}
       // register event listener;
       events["mousemove a"] = [move_canvas, g]
       events["mousedown a"] = [dec_down, g]
       events["mouseup a"] = [dec_up, g]
       let store : globalStore_type = {
         display : {
-            "button" : [["change_mode|Move Balloons", [0, HEIGHT, 40, 40], ""],["change_mode|Color Balloons", [40, HEIGHT, 40, 40], ""],["change_mode|Move Ribbons", [80, HEIGHT, 40, 40], ""],["change_mode|Color Ribbons", [120, HEIGHT, 40, 40], ""],["change_mode|Move Flowers", [160, HEIGHT, 40, 40], ""],["change_mode|Color Flowers", [200, HEIGHT, 40, 40], ""],["change_mode|Move Banner", [240, HEIGHT, 40, 40], ""]],
+            "button" : [["change_mode|Move Balloons", [0, HEIGHT, 40, 40], ""],["change_mode|Color Balloons", [40, HEIGHT, 40, 40], ""],["change_mode|Move Ribbons", [80, HEIGHT, 40, 40], ""],["change_mode|Color Ribbons", [120, HEIGHT, 40, 40], ""],["change_mode|Move Flowers", [160, HEIGHT, 40, 40], ""],["change_mode|Color Flowers", [200, HEIGHT, 40, 40], ""],["change_mode|Move Banner", [240, HEIGHT, 40, 40], ""], ["next", [WIDTH-400, HEIGHT, 40, 40], ""]],
             "canvas" : [["main",[0,0,WIDTH,HEIGHT]], ["anim_frame",[0,0,WIDTH,HEIGHT]]],
             "image" : [],
             "text":[["Current Mode : Move Balloons", WIDTH-300, HEIGHT+10]] 
@@ -147,12 +158,33 @@ function App() {
         mouse :[0,0],
         mousedown : false,
         party_mode : "Move Balloons",
-        banner_diff : 0
+        banner_diff : 0,
 
       }
       g.mode = "decorations"
       return <GameDisplay data={data} globalStore={store}  FPS={60}/>
+    } else if(firstInt < firstInts.length){
+      return <><img src={firstInt < 5 ? "intro.png" : "introbox.png" } className="topleft"/> <div className="text">{firstInts[firstInt]} </div>  <div className='nextButton'><button  onClick={() => {if(firstInt == 0){ setIntro(x => x-1) } else {setFirstInt(x => x-1)}}}>Prev</button> <button  onClick={() => setFirstInt(x => x+1)}>Next</button></div></>
+    } else if(firstInt == firstInts.length) {
+      
+      let data = clone_gamedata(data_obj_shop);
+      data.g = g;
+      let store : globalStore_type = {
+        display : {
+            "button" : [],
+            "canvas" : [["main",[0,0,WIDTH,HEIGHT]], ["anim_frame",[0,0,WIDTH,HEIGHT]]],
+            "image" : [],
+            "text":[] 
+        },
+        props_to_run : [],
+        mouse :[0,0],
+        mousedown : false,
+        party_mode : "Move Balloons",
+        banner_diff : 0,
 
+      }
+
+      return <GameDisplay data={data} globalStore={store}  FPS={60}/>
     }
   }
 }
