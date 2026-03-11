@@ -16,7 +16,7 @@ import { apply_matrix3, display_total, get_shape_d, translation_matrix, output a
 import { displace_command } from "../rotation";
 import { HEIGHT, WIDTH } from "./App";
 
-export const SHOP_SCROLL_SPEED = 6;
+export const SHOP_SCROLL_SPEED = 3;
 
 export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_type , events : any[] , canvas : string){
     let output : draw_command[] = []; 
