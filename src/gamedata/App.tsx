@@ -161,7 +161,7 @@ function App() {
   } else {
     // INTRO 
     if(intro < intros.length){
-      return <><img src={intro < 5 ? "room.png" : "box.png" } className="topleft"/> <div className="text">{intros[intro]} </div>  <div className='nextButton'>{intro != 0 ? <button  onClick={() => setIntro(x => x-1)}>Prev</button> : "-------"} <button  onClick={() => setIntro(x => x+1)}>Next</button></div></>
+      return <><img src={intro < 5 ? "room.png" : "box.png" } className="topleft"/> {intro < 5 ? <img src={"casual_girl.png"} className="topleft"/>: null}<div className="text">{intros[intro]} </div>  <div className='nextButton'>{intro != 0 ? <button  onClick={() => setIntro(x => x-1)}>Prev</button> : "-------"} <button  onClick={() => setIntro(x => x+1)}>Next</button></div></>
     } else if(intro == intros.length) { // start decorations
       // get gameData
       let data = clone_gamedata(data_obj_deco); 
@@ -191,7 +191,7 @@ function App() {
       g.mode = "decorations"
       return <GameDisplay data={data} globalStore={store}  FPS={60}/>
     } else if(firstInt < firstInts.length){
-      return <><img src={"room.png"} className="topleft"/> <div className="text">{firstInts[firstInt]} </div>  <div className='nextButton'><button  onClick={() => {if(firstInt == 0){ setIntro(x => x-1) } else {setFirstInt(x => x-1)}}}>Prev</button> <button  onClick={() => setFirstInt(x => x+1)}>Next</button></div></>
+      return <><img src={"room.png"} className="topleft"/><img src={"casual_girl.png"} className="topleft"/> <div className="text">{firstInts[firstInt]} </div>  <div className='nextButton'><button  onClick={() => {if(firstInt == 0){ setIntro(x => x-1) } else {setFirstInt(x => x-1)}}}>Prev</button> <button  onClick={() => setFirstInt(x => x+1)}>Next</button></div></>
     } else if(firstInt == firstInts.length) {
       
       let data = clone_gamedata(data_obj_shop);
@@ -216,7 +216,7 @@ function App() {
       g.mode = "shopping"
       return <GameDisplay data={data} globalStore={store}  FPS={60}/>
     } else if(secondInt < secondInts.length){
-      return <><img src={"room.png"} className="topleft"/> <div className="text">{secondInts[secondInt]} </div>  <div className='nextButton'><button  onClick={() => {if(secondInt == 0){ setFirstInt(x => x-1) } else {setSecondInt(x => x-1)}}}>Prev</button> <button  onClick={() => setSecondInt(x => x+1)}>Next</button></div></>
+      return <><img src={"room.png"} className="topleft"/><img src={"casual_girl.png"} className="topleft"/> <div className="text">{secondInts[secondInt]} </div>  <div className='nextButton'><button  onClick={() => {if(secondInt == 0){ setFirstInt(x => x-1) } else {setSecondInt(x => x-1)}}}>Prev</button> <button  onClick={() => setSecondInt(x => x+1)}>Next</button></div></>
     } else {
       let data = clone_gamedata(data_obj_stage);
       data.g = g;
