@@ -115,10 +115,10 @@ export let button_click : button_click_type = function(g : game,globalStore : gl
         return [["rerender", 0]];
     } else {
 
-        // catch all , in case all else fails
-        return [[name, ""]]
+
     }
-    return []
+    // catch all , in case all else fails
+    return [[name, ""]]
 }
 
 export let reset_fn : reset_fn_type = function() {

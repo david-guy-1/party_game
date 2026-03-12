@@ -81,7 +81,8 @@ export let prop_commands : prop_commands_type = function(g : game,globalStore : 
 }
 
 export let button_click : button_click_type = function(g : game,globalStore : globalStore_type, name : string){
-    return []
+    // catch all , in case all else fails
+    return [[name, ""]]
 }
 
 export let reset_fn : reset_fn_type = function() {
