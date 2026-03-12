@@ -4,6 +4,7 @@ import game from './game';
 import { data_obj as data_obj_deco } from './GameData_deco';
 
 import { data_obj as data_obj_shop, SHOP_SCROLL_SPEED } from './GameData_shop';
+import {data_obj as data_obj_stage} from "./GameData_stage";
 import { events } from '../EventManager';
 import GameDisplay, { clone_gamedata } from '../GameDisplay';
 import { gamedata } from '../interfaces';
@@ -152,6 +153,24 @@ function App() {
   if(g == undefined){
     setG(new game())
   } else {
+    let data = clone_gamedata(data_obj_stage);
+    data.g = g;
+    let store : globalStore_type = {
+      display : {
+          "button" : [["change_mode|Move Balloons", [0, HEIGHT, 40, 40], ""],["change_mode|Color Balloons", [40, HEIGHT, 40, 40], ""],["change_mode|Move Ribbons", [80, HEIGHT, 40, 40], ""],["change_mode|Color Ribbons", [120, HEIGHT, 40, 40], ""],["change_mode|Move Flowers", [160, HEIGHT, 40, 40], ""],["change_mode|Color Flowers", [200, HEIGHT, 40, 40], ""],["change_mode|Move Banner", [240, HEIGHT, 40, 40], ""], ["next", [WIDTH-400, HEIGHT, 40, 40], ""]],
+          "canvas" : [["main",[0,0,WIDTH,HEIGHT]], ["anim_frame",[0,0,WIDTH,HEIGHT]]],
+          "image" : [],
+          "text":[["Current Mode : Move Balloons", WIDTH-300, HEIGHT+10]] 
+      },
+      props_to_run : [],
+      mouse :[0,0],
+      mousedown : false,
+      party_mode : "Move Balloons",
+      banner_diff : 0,
+      shop_rerender : false,
+
+    }
+    return <GameDisplay data={data} globalStore={store}  FPS={60}/>
     // INTRO 
     if(intro < intros.length){
       return <><img src={intro < 5 ? "intro.png" : "introbox.png" } className="topleft"/> <div className="text">{intros[intro]} </div>  <div className='nextButton'>{intro != 0 ? <button  onClick={() => setIntro(x => x-1)}>Prev</button> : "-------"} <button  onClick={() => setIntro(x => x+1)}>Next</button></div></>

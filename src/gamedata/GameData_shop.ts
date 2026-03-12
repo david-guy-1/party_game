@@ -34,7 +34,15 @@ export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_
         // food items
         for(let [item, height, t] of g.shop_items){
             let time_diff = g.t-t;
-            let food_output = display_output(shop_map[item]);
+            let display_thing = shop_map[item];
+            let food_output : draw_command[] = []
+            if("layers" in display_thing){
+                food_output = display_output(display_thing);
+            } else if(!Array.isArray(display_thing)) {
+                food_output = [display_thing.output(0, 0)];
+            } else {
+                food_output = display_thing; 
+            }
             output = output.concat(food_output.map(x => displace_command(x, [WIDTH + 100 - time_diff *  SHOP_SCROLL_SPEED , 174 + 100 * height])));
         }
         //cleanup

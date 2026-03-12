@@ -4,8 +4,8 @@ import { dist, moveTo } from "../lines";
 import { HEIGHT, WIDTH } from "./App";
 import { choice } from "../random";
 
-export type food_items = "Plain Cookies" | "Chocolate Chip Cookies" | "Vanilla Ice Cream" | "BBQ Chips" | "Plain Instant Noodles" | "Beef Patties"
-export const food_items : food_items[] = ["Plain Cookies" , "Chocolate Chip Cookies" , "Vanilla Ice Cream", "BBQ Chips","Plain Instant Noodles", "Beef Patties"]
+export type food_items = "Plain Cookies" | "Chocolate Chip Cookies" | "Vanilla Ice Cream" | "BBQ Chips" | "Plain Instant Noodles" | "Beef Patties" | "Rice" | "Sausages"
+export const food_items : food_items[] = ["Plain Cookies" , "Chocolate Chip Cookies" , "Vanilla Ice Cream", "BBQ Chips","Plain Instant Noodles", "Beef Patties", "Rice",  "Sausages"]
 
 
 export type game_states = "decorations" | "shopping"
@@ -27,7 +27,9 @@ class game implements game_interface{
         "Vanilla Ice Cream": 0,
         "BBQ Chips": 0,
         "Plain Instant Noodles": 0,
-        "Beef Patties": 0
+        "Beef Patties": 0,
+        "Rice" : 0,
+        "Sausages" : 0
     }; 
     constructor(){
         this.balloons = []
@@ -56,7 +58,7 @@ class game implements game_interface{
         if(this.mode == "shopping"){
             let time_since_last_spawn : number = this.t - this.shop_last_spawn
             if((Math.random() < 0.03 &&  time_since_last_spawn > 30) || time_since_last_spawn > 300){
-                this.shop_items.push([choice(["Plain Instant Noodles"], Math.random().toString()), Math.floor(Math.random()*4), this.t]); ;
+                this.shop_items.push([choice(["Beef Patties" , "Rice", "Sausages"], Math.random().toString()), Math.floor(Math.random()*4), this.t]); ;
                 this.shop_last_spawn = this.t
             }
         }
