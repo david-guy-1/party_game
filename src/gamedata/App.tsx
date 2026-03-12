@@ -141,9 +141,9 @@ const intros = ["Hello, my name is Amy.",
 ]
 
 const firstInts = [
-  "Now that I finished decorating, I want to do crap",
-  "But what crap should I do?",
-  "I'll ask my friends.",
+  "Now that I finished decorating, I want to go shopping",
+  "Let's see what I'm missing?",
+  "Oh! Better get some snacks for the party!",
 ]
 
 function App() {
@@ -153,27 +153,9 @@ function App() {
   if(g == undefined){
     setG(new game())
   } else {
-    let data = clone_gamedata(data_obj_stage);
-    data.g = g;
-    let store : globalStore_type = {
-      display : {
-          "button" : [["change_mode|Move Balloons", [0, HEIGHT, 40, 40], ""],["change_mode|Color Balloons", [40, HEIGHT, 40, 40], ""],["change_mode|Move Ribbons", [80, HEIGHT, 40, 40], ""],["change_mode|Color Ribbons", [120, HEIGHT, 40, 40], ""],["change_mode|Move Flowers", [160, HEIGHT, 40, 40], ""],["change_mode|Color Flowers", [200, HEIGHT, 40, 40], ""],["change_mode|Move Banner", [240, HEIGHT, 40, 40], ""], ["next", [WIDTH-400, HEIGHT, 40, 40], ""]],
-          "canvas" : [["main",[0,0,WIDTH,HEIGHT]], ["anim_frame",[0,0,WIDTH,HEIGHT]]],
-          "image" : [],
-          "text":[["Current Mode : Move Balloons", WIDTH-300, HEIGHT+10]] 
-      },
-      props_to_run : [],
-      mouse :[0,0],
-      mousedown : false,
-      party_mode : "Move Balloons",
-      banner_diff : 0,
-      shop_rerender : false,
-
-    }
-    return <GameDisplay data={data} globalStore={store}  FPS={60}/>
     // INTRO 
     if(intro < intros.length){
-      return <><img src={intro < 5 ? "intro.png" : "introbox.png" } className="topleft"/> <div className="text">{intros[intro]} </div>  <div className='nextButton'>{intro != 0 ? <button  onClick={() => setIntro(x => x-1)}>Prev</button> : "-------"} <button  onClick={() => setIntro(x => x+1)}>Next</button></div></>
+      return <><img src={intro < 5 ? "room.png" : "box.png" } className="topleft"/> <div className="text">{intros[intro]} </div>  <div className='nextButton'>{intro != 0 ? <button  onClick={() => setIntro(x => x-1)}>Prev</button> : "-------"} <button  onClick={() => setIntro(x => x+1)}>Next</button></div></>
     } else if(intro == intros.length) { // start decorations
       // get gameData
       let data = clone_gamedata(data_obj_deco); 
@@ -203,7 +185,7 @@ function App() {
       g.mode = "decorations"
       return <GameDisplay data={data} globalStore={store}  FPS={60}/>
     } else if(firstInt < firstInts.length){
-      return <><img src={firstInt < 5 ? "intro.png" : "introbox.png" } className="topleft"/> <div className="text">{firstInts[firstInt]} </div>  <div className='nextButton'><button  onClick={() => {if(firstInt == 0){ setIntro(x => x-1) } else {setFirstInt(x => x-1)}}}>Prev</button> <button  onClick={() => setFirstInt(x => x+1)}>Next</button></div></>
+      return <><img src={"room.png"} className="topleft"/> <div className="text">{firstInts[firstInt]} </div>  <div className='nextButton'><button  onClick={() => {if(firstInt == 0){ setIntro(x => x-1) } else {setFirstInt(x => x-1)}}}>Prev</button> <button  onClick={() => setFirstInt(x => x+1)}>Next</button></div></>
     } else if(firstInt == firstInts.length) {
       
       let data = clone_gamedata(data_obj_shop);
@@ -231,3 +213,26 @@ function App() {
 }
 
 export default App
+
+/*
+    let data = clone_gamedata(data_obj_stage);
+    data.g = g;
+    let store : globalStore_type = {
+      display : {
+          "button" : [["change_mode|Move Balloons", [0, HEIGHT, 40, 40], ""],["change_mode|Color Balloons", [40, HEIGHT, 40, 40], ""],["change_mode|Move Ribbons", [80, HEIGHT, 40, 40], ""],["change_mode|Color Ribbons", [120, HEIGHT, 40, 40], ""],["change_mode|Move Flowers", [160, HEIGHT, 40, 40], ""],["change_mode|Color Flowers", [200, HEIGHT, 40, 40], ""],["change_mode|Move Banner", [240, HEIGHT, 40, 40], ""], ["next", [WIDTH-400, HEIGHT, 40, 40], ""]],
+          "canvas" : [["main",[0,0,WIDTH,HEIGHT]], ["anim_frame",[0,0,WIDTH,HEIGHT]]],
+          "image" : [],
+          "text":[["Current Mode : Move Balloons", WIDTH-300, HEIGHT+10]] 
+      },
+      props_to_run : [],
+      mouse :[0,0],
+      mousedown : false,
+      party_mode : "Move Balloons",
+      banner_diff : 0,
+      shop_rerender : false,
+
+    }
+    return <GameDisplay data={data} globalStore={store}  FPS={60}/>
+
+
+*/
