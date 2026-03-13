@@ -12,6 +12,14 @@
 
 }
 
+.decoimage{
+  position: absolute;
+  top:188px;
+  left:154px;
+  width:347px;
+  height:309px;
+}
+
 .text {
   position: absolute;
   top:20px;

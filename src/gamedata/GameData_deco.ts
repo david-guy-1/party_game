@@ -113,9 +113,11 @@ export let button_click : button_click_type = function(g : game,globalStore : gl
         globalStore.party_mode = name.split("|")[1] as party_modes; 
         globalStore.display.text[0] = [`Current Mode : ${globalStore.party_mode}`, WIDTH-300, HEIGHT+10]
         return [["rerender", 0]];
-    } else {
-
-
+    }
+    if(name == "next" && globalStore.display.refs ){
+        let canvas =  globalStore.display.refs.current["main"];
+        let s = canvas.toDataURL('image/png');
+        return [["next", s]];
     }
     // catch all , in case all else fails
     return [[name, ""]]
