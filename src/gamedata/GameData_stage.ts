@@ -17,29 +17,6 @@ import {output as display_output} from "../total_draw"
 
 export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_type , events : any[] , canvas : string){
     let output : draw_command[] = []; 
-    let dance_clone = JSON.parse(JSON.stringify(dance)) as display_total;
-    
-    dance_clone.layers[2].shapes.forEach(function(x,i){
-        let seed = g.t/5 + 59*i;
-        //move points
-        for(let j=0; j < x.points.length; j++){
-            x.points[j][1] += 30 * Math.cos(seed)  
-            x.points[j][2] += 20 * Math.sin(seed * 0.9) + 5 * Math.sin(seed + j)
-        }
-        //adjust fill 
-        x.fill = `hsla(${(seed * 10)%360}, ${80 + Math.sin(seed/2)*10}%, ${80 + Math.sin(seed/2)*10}%, 0.4)`
-
-    }) 
-    // squares
-    dance_clone.layers[1].shapes.forEach(function(x, i){
-        let seed = g.t/5 + 59*i;
-        let seed2 = seed/3 + 60 * i;
-        x.fill = `hsl(${(seed2* 10)%360}, ${80 + Math.sin(seed2)*10}%, ${80 + Math.sin(seed2)*10}%)`
-        
-    })
-
-    output = display_output(dance_clone);
-    
     return [output,true];
 }
 
@@ -80,3 +57,12 @@ export let data_obj : gamedata =  {
     reset_fn: reset_fn,
     prop_fns: {}
 }
+
+/*
+animated dance scene
+
+
+
+
+
+*/

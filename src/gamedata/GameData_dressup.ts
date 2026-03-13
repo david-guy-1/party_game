@@ -24,10 +24,10 @@ export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_
         output.push(d_image("room.png", -400, 0));
         let girl = JSON.parse(JSON.stringify(dug_girl)) as display_total;
         //top1 , skirt3, light pink top, yellow skirt
-        let selected_top = "top" + (globalStore.selected_top);
-        let selected_skirt = "skirt" + (globalStore.selected_skirt);; 
-        let selected_shoe = "shoe" + (globalStore.selected_shoe);;
-        let selected_necklace = "necklace" + (globalStore.selected_necklace); // no +1 because no necklace is valid 
+        let selected_top = "top" + (g.selected_top);
+        let selected_skirt = "skirt" + (g.selected_skirt);; 
+        let selected_shoe = "shoe" + (g.selected_shoe);;
+        let selected_necklace = "necklace" + (g.selected_necklace); // no +1 because no necklace is valid 
         for(let layer of girl.layers){
             for(let shape of layer.shapes){
                 if(_.some( shape.tag,x => /^top[0-9]/.test(x))){
@@ -41,7 +41,7 @@ export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_
                     shape.visible = false; 
                 }
                 if(shape.tag.indexOf(selected_skirt) != -1){
-                    shape.visible = true; 
+                    shape.visible = true; ``
                 }
                 if(_.some( shape.tag,x => /^shoe[0-9]/.test(x))){
                     shape.visible = false; 
@@ -59,9 +59,9 @@ export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_
 
             }
         }
-        set_hue(girl, [selected_top], "tags", globalStore.selected_top_color, 1);
-        set_hue(girl, [selected_skirt], "tags", globalStore.selected_skirt_color, 1);
-        set_hue(girl, [selected_shoe], "tags", globalStore.selected_shoe_color, 1);
+        set_hue(girl, [selected_top], "tags", g.selected_top_color, 1);
+        set_hue(girl, [selected_skirt], "tags", g.selected_skirt_color, 1);
+        set_hue(girl, [selected_shoe], "tags", g.selected_shoe_color, 1);
         console.log(globalStore);
         output =output.concat( display_output(girl)); 
     }
@@ -86,39 +86,40 @@ export let prop_commands : prop_commands_type = function(g : game,globalStore : 
 export let button_click : button_click_type = function(g : game,globalStore : globalStore_type, name : string){
     switch(name){
         case "top":
-            globalStore.selected_top ++; 
-            if(globalStore.selected_top == N_TOPS + 1){
-                globalStore.selected_top = 1; 
+            g.selected_top ++; 
+            if(g.selected_top == N_TOPS + 1){
+                g.selected_top = 1; 
             }
             break;
         case "skirt":
-            globalStore.selected_skirt ++; 
-            if(globalStore.selected_skirt == N_SKIRTS + 1){
-                globalStore.selected_skirt = 1; 
+            g.selected_skirt ++; 
+            if(g.selected_skirt == N_SKIRTS + 1){
+                g.selected_skirt = 1; 
             }
             break;
         case "shoe":
-            globalStore.selected_shoe ++; 
-            if(globalStore.selected_shoe == N_SHOES + 1){
-                globalStore.selected_shoe = 1; 
+            g.selected_shoe ++; 
+            if(g.selected_shoe == N_SHOES + 1){
+                g.selected_shoe = 1; 
             }
             break;
         case "necklace":
-            globalStore.selected_necklace ++; 
-            if(globalStore.selected_necklace == N_NECKLACES + 1){
-                globalStore.selected_necklace = 0; 
+            g.selected_necklace ++; 
+            if(g.selected_necklace == N_NECKLACES + 1){
+                g.selected_necklace = 0; 
             }
             break;
         case "top color":
-            globalStore.selected_top_color += 30;
+            g.selected_top_color += 30;
             break;
         case "skirt color":
-            globalStore.selected_skirt_color += 30;
+            g.selected_skirt_color += 30;
             break;
         case "shoe color":
-            globalStore.selected_shoe_color += 30;
+            g.selected_shoe_color += 30;
             break;
-                    
+        case "finish":
+            return [["next", 0]]
         
     }
     return []

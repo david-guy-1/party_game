@@ -8,7 +8,7 @@ export type food_items = "Plain Cookies" | "Chocolate Chip Cookies" | "Vanilla I
 export const food_items : food_items[] = ["Plain Cookies" , "Chocolate Chip Cookies" , "Vanilla Ice Cream", "BBQ Chips","Plain Instant Noodles", "Beef Patties", "Rice",  "Sausages"]
 
 
-export type game_states = "decorations" | "shopping"
+export type game_states = "decorations" | "shopping" | "driving"
 class game implements game_interface{
     banner_height : number = 0;
     balloons : point[] = [];
@@ -31,6 +31,24 @@ class game implements game_interface{
         "Rice" : 0,
         "Sausages" : 0
     }; 
+
+    dance_selected = false;
+    paint_selected = false;
+    screen_selected = false;
+    booth_selected = false;
+
+    // dress up game 
+    selected_top : number = 1
+    selected_skirt : number = 1
+    selected_shoe : number= 1
+    selected_necklace : number = 0
+    selected_top_color : number = 150
+    selected_skirt_color : number= 30
+    selected_shoe_color : number = 120
+    
+    //driving
+    progress = 0;
+    lights = [0,10,30,60,100,125];
     constructor(){
         this.balloons = []
         this.balloon_colors = []
@@ -57,9 +75,14 @@ class game implements game_interface{
         this.t++;
         if(this.mode == "shopping"){
             let time_since_last_spawn : number = this.t - this.shop_last_spawn
-            if((Math.random() < 0.03 &&  time_since_last_spawn > 30) || time_since_last_spawn > 300){
-                this.shop_items.push([choice(["Beef Patties" , "Rice", "Sausages"], Math.random().toString()), Math.floor(Math.random()*4), this.t]); ;
+            if((Math.random() < 0.1 &&  time_since_last_spawn > 30) || time_since_last_spawn > 300){
+                this.shop_items.push([choice(food_items, Math.random().toString()), Math.floor(Math.random()*4), this.t]); ;
                 this.shop_last_spawn = this.t
+            }
+        }
+        if(this.mode == "driving"){
+            for(let i = 0; i < this.lights.length; i++){
+                this.lights[i] += Math.random()
             }
         }
         return [];

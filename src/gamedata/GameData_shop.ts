@@ -21,6 +21,7 @@ export const SHOP_SCROLL_SPEED = 3;
 export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_type , events : any[] , canvas : string){
     let output : draw_command[] = []; 
     if(canvas == "main"){
+        
         // wall and floor
         output.push(wall_img.output(0,0)); 
         output = output.concat(display_output(shopping_floor).map( x => displace_command(x, [0, HEIGHT-129])))
@@ -31,6 +32,7 @@ export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_
         }
         output = output.concat(display_output(shelves).map( x => displace_command(x, [-amount, 0])))
         
+        output.push(d_image("girl side.png",0,20) );
         // food items
         for(let [item, height, t] of g.shop_items){
             let time_diff = g.t-t;
@@ -72,7 +74,7 @@ export let prop_commands : prop_commands_type = function(g : game,globalStore : 
     if(globalStore.shop_rerender){
         globalStore.display.text = []; 
         for(let [i, item] of food_items.entries()){
-            globalStore.display.text.push([`${item} : ${g.items_total[item]}`, WIDTH, 30 + 30*i])
+            globalStore.display.text.push([`${item} : ${g.items_total[item]}`, WIDTH, 60 + 30*i])
         }
         globalStore.shop_rerender = false;
         return [["rerender", 0]]
