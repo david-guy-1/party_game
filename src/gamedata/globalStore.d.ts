@@ -13,5 +13,14 @@ export type globalStore_type = {
     clicked_flower ?: number
     party_mode : party_modes
     shop_rerender : boolean
+
+    // dress up game 
+    selected_top : number
+    selected_skirt : number
+    selected_shoe : number,
+    selected_necklace : number,
+    selected_top_color : number,
+    selected_skirt_color : number,
+    selected_shoe_color : number
 }
 export type events_type = any;

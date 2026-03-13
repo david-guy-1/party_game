@@ -108,6 +108,14 @@ export function concat_obj<K extends string | number | symbol, V>(obj : Record<K
 	return obj;
 }
 
+export function cyclic_next<T>(lst : T[], current : T) : T{
+	let current_n = lst.indexOf(current)
+	if(current_n == lst.length - 1) {
+		return lst[0];
+	} else {
+		return lst[current_n+1]; 
+	}
+}
 export function noNaN(lst : any[]) {
     for (let f of lst) {
         if (typeof (f) == "number" && isNaN(f)) {

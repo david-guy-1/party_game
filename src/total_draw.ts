@@ -5,6 +5,7 @@ import { add_com, d_line, d_bezier, d_smoothbezier, d_circle, d_ellipse2, d_text
 import { lincomb, dist, taxicab_dist, Mv, scalar_multiple } from "./lines"
 import { draw_wrap } from "./process_draws"
 import { scale_command, displace_command } from "./rotation"
+import w3color from "./w3colors.js";
 
 /* zod : 
 convert.py
@@ -917,6 +918,52 @@ export function apply_matrix3(d :display_total, mat : matrix3, scope : "shape" |
             result = scalar_multiple(1/result[2], result) as point3d; 
             d.points[i][1] = result[0];
             d.points[i][2] = result[1];
+        }
+    }
+}
+
+export function recolor(color : string,target_hue : number, target_brightness : number = 1 ) : string {
+    let color_obj = w3color(color); 
+    return `hsl(${target_hue}, 100%, ${Math.max(0, Math.min(color_obj.lightness * target_brightness,1)) * 100}%)`
+}
+
+export function set_hue(d : display_total, items : string[], type : "layers" | "shapes" | "tags", target_hue : number, target_brightness : number = 1 ){
+    let shapes : [number, number ][] = [];//all are indices
+    for(let [i, layer] of d.layers.entries()){
+        for(let [j, shape] of layer.shapes.entries()){
+            // check if shape is valid
+            switch(type){
+                case "layers":
+                    if(items.indexOf(layer.name) != -1 ){
+                        shapes.push([i,j]);
+                    }
+                    break;
+                case "shapes":
+                    if(items.indexOf(shape.name) != -1 ){
+                        shapes.push([i,j]);
+                    }
+                    break;
+                case "tags":
+                    if(_.intersection(items, shape.tag).length !=0){
+                        shapes.push([i,j]);
+                    }
+                    break; 
+            }
+        }
+    } 
+    for(let [i, j] of shapes){
+        let shape = d.layers[i].shapes[j];
+        if(shape.outline){
+            shape.outline.color = recolor(shape.outline.color, target_hue, target_brightness); 
+        }
+        if(shape.fill){
+            if(typeof shape.fill == "string"){
+                shape.fill = recolor(shape.fill, target_hue, target_brightness); 
+            } else {
+                for(let k = 0; k < shape.fill.colorstops.length; k++){
+                    shape.fill.colorstops[k][1] = recolor(shape.fill.colorstops[k][1], target_hue, target_brightness); 
+                }
+            }
         }
     }
 }
