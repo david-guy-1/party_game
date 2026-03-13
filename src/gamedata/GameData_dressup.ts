@@ -21,6 +21,7 @@ const N_NECKLACES = 3;
 export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_type , events : any[] , canvas : string){
     let output : draw_command[] = []; 
     if(canvas == "main"){
+        output.push(d_image("room.png", -400, 0));
         let girl = JSON.parse(JSON.stringify(dug_girl)) as display_total;
         //top1 , skirt3, light pink top, yellow skirt
         let selected_top = "top" + (globalStore.selected_top);
@@ -62,7 +63,7 @@ export let draw_fn : draw_fn_type = function(g : game,globalStore : globalStore_
         set_hue(girl, [selected_skirt], "tags", globalStore.selected_skirt_color, 1);
         set_hue(girl, [selected_shoe], "tags", globalStore.selected_shoe_color, 1);
         console.log(globalStore);
-        output = display_output(girl); 
+        output =output.concat( display_output(girl)); 
     }
     return [output,true];
 }
